@@ -12,10 +12,20 @@
 | 模块 | 方向 | 状态 |
 |------|------|------|
 | [01 传统安全](01-traditional-security/) | Web/系统漏洞原理、复现、防护、检测 | 🚧 搭建中 |
-| [02 AI 安全](02-ai-security/) | 提示注入、越狱、模型滥用等案例研究 | 🚧 搭建中 |
-| [03 Agent / RAG 安全](03-agent-rag-security/) | AI Agent / RAG 系统的安全工具与防护 | 🚧 搭建中 |
+| [02 AI 安全](02-ai-security/) | 提示注入、越狱、模型滥用等案例研究 | ✅ 2 个案例 |
+| [03 Agent / RAG 安全](03-agent-rag-security/) | AI Agent / RAG 系统的安全工具与防护 | ✅ 1 个工具 |
 | [04 运营 AI 提效](04-ops-ai-efficiency/) | 教学运营场景的 AI 自动化案例 | 🚧 搭建中 |
 | [05 简历与面试](05-resume-interview/) | 简历项目描述、面试表达、作品集话术 | 🚧 搭建中 |
+
+## ✅ 已完成案例（可运行）
+
+| 案例 | 方向 | 看点 |
+|------|------|------|
+| [提示注入 Prompt Injection](02-ai-security/prompt-injection/) | AI 安全 | 模型被"忽略指令"劫持泄露系统提示词 → 输入护栏拦截 |
+| [越狱 Jailbreak](02-ai-security/jailbreak/) | AI 安全 | 角色扮演/DAN 绕过安全护栏 → 越狱检测+拒答加固 |
+| [RAG 注入检测器](03-agent-rag-security/rag-injection-detector/) | Agent/RAG 安全 | 知识库投毒劫持模型 → 可扫描文件的注入检测工具 |
+
+> 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
 
 ## 🧭 每个模块的统一结构
 
