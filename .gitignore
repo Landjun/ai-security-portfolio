@@ -1,0 +1,34 @@
+# ---- 密钥 / 环境变量（永远不要提交）----
+.env
+.env.*
+*.key
+*.pem
+secrets.*
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+
+# ---- Node ----
+node_modules/
+npm-debug.log*
+dist/
+build/
+
+# ---- IDE / 编辑器 ----
+.vscode/
+.idea/
+*.swp
+
+# ---- 操作系统 ----
+.DS_Store
+Thumbs.db
+
+# ---- 日志 / 临时 ----
+*.log
+tmp/
