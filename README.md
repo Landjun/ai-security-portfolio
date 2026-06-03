@@ -13,7 +13,7 @@
 |------|------|------|
 | [01 传统安全](01-traditional-security/) | Web/系统漏洞原理、复现、防护、检测 | 🚧 搭建中 |
 | [02 AI 安全](02-ai-security/) | 提示注入、越狱、模型滥用等案例研究 | ✅ 2 个案例 |
-| [03 Agent / RAG 安全](03-agent-rag-security/) | AI Agent / RAG 系统的安全工具与防护 | ✅ 2 个工具 |
+| [03 Agent / RAG 安全](03-agent-rag-security/) | AI Agent / RAG 系统的安全工具与防护 | ✅ 3 个工具 |
 | [04 运营 AI 提效](04-ops-ai-efficiency/) | 教学运营场景的 AI 自动化案例 | 🚧 搭建中 |
 | [05 简历与面试](05-resume-interview/) | 简历项目描述、面试表达、作品集话术 | 🚧 搭建中 |
 
@@ -25,6 +25,7 @@
 | [越狱 Jailbreak](02-ai-security/jailbreak/) | AI 安全 | 角色扮演/DAN 绕过安全护栏 → 越狱检测+拒答加固 |
 | [RAG 注入检测器](03-agent-rag-security/rag-injection-detector/) | Agent/RAG 安全 | 知识库投毒劫持模型 → 可扫描文件的注入检测工具 |
 | [Agent 工具调用权限审计](03-agent-rag-security/tool-permission-audit/) | Agent/RAG 安全 | 被劫持 Agent 越权转账/删库 → 最小权限审计拦截(LLM06) |
+| [端到端安全 Agent 管线](03-agent-rag-security/secure-agent-pipeline/) | Agent/RAG 安全 | 复用上两个工具 → 纵深防御:任一层失守另一层兜底(LLM01+06) |
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
 
