@@ -1,6 +1,7 @@
 # ---- 密钥 / 环境变量（永远不要提交）----
 .env
 .env.*
+!.env.example
 *.key
 *.pem
 secrets.*
