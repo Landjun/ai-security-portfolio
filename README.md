@@ -31,7 +31,7 @@
 
 ## ✍️ 文章与表达输出
 
-- [当 AI Agent 被劫持：用纵深防御守住"会动手的模型"](articles/agent-security-defense-in-depth.md) — 技术博客文章
+- [当 AI Agent 被劫持：用纵深防御守住"会动手的模型"](articles/agent-security-defense-in-depth.md) — 技术博客文章（📤 待发布，见[发布指南](articles/PUBLISH-GUIDE.md)）
 - [PPT 大纲 + 5 分钟面试口播稿](05-resume-interview/talk-deck-outline.md) — 面试/分享用
 - [简历项目话术](05-resume-interview/resume-bullets.md) — 5 条可直接写进简历的要点
 
