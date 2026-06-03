@@ -36,12 +36,15 @@ def cosine(a: np.ndarray, b: np.ndarray) -> float:
 
 
 class RealRAG:
-    def __init__(self):
+    def __init__(self, documents=None):
+        # documents 不传则用默认知识库;传入可换成任意(含投毒)知识库,便于安全实验复用
+        self.documents = documents if documents is not None else DOCUMENTS
+
         print("[1/3] 加载本地 embedding 模型(首次会下载,请稍候)...")
         self.embedder = TextEmbedding(model_name=EMBED_MODEL)
 
         print("[2/3] 把知识库文档向量化(建索引)...")
-        texts = [d["title"] + "。" + d["content"] for d in DOCUMENTS]
+        texts = [d["title"] + "。" + d["content"] for d in self.documents]
         self.doc_vectors = list(self.embedder.embed(texts))  # 每篇文档一个向量
 
         print("[3/3] 连接 DeepSeek...")
@@ -55,14 +58,32 @@ class RealRAG:
         """语义检索:返回与问题最相关的 top_k 篇文档(带相似度分数)。"""
         q_vec = list(self.embedder.embed([question]))[0]
         scored = []
-        for doc, vec in zip(DOCUMENTS, self.doc_vectors):
+        for doc, vec in zip(self.documents, self.doc_vectors):
             scored.append((cosine(q_vec, vec), doc))
         scored.sort(key=lambda x: x[0], reverse=True)
         return scored[:top_k]
 
-    def answer(self, question: str) -> str:
-        """完整 RAG:检索 -> 拼上下文 -> DeepSeek 基于上下文作答。"""
+    def answer(self, question: str, doc_filter=None) -> str:
+        """
+        完整 RAG:检索 -> (可选)过滤 -> 拼上下文 -> DeepSeek 基于上下文作答。
+        doc_filter: 可选回调 (doc) -> bool,返回 False 的文档会被剔除(用于注入防御)。
+        """
         hits = self.retrieve(question)
+
+        print("检索到的相关文档:")
+        for score, doc in hits:
+            print(f"  - [{doc['id']}] {doc['title']}(相似度 {score:.3f})")
+
+        # 检索后过滤:把被判定为危险的文档剔除,不让它进入提示词
+        if doc_filter is not None:
+            kept = []
+            for _, doc in hits:
+                if doc_filter(doc):
+                    kept.append(doc)
+                else:
+                    print(f"  ! 已剔除可疑文档 [{doc['id']}] {doc['title']}")
+            hits = [(0.0, d) for d in kept]
+
         context = "\n".join(f"【{doc['title']}】{doc['content']}" for _, doc in hits)
 
         system = (
@@ -78,11 +99,6 @@ class RealRAG:
             temperature=0.2,
         )
         answer = resp.choices[0].message.content
-
-        # 打印检索过程,方便理解 RAG 在干什么
-        print("检索到的相关文档:")
-        for score, doc in hits:
-            print(f"  - [{doc['id']}] {doc['title']}(相似度 {score:.3f})")
         return answer
 
 

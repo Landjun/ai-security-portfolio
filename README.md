@@ -30,6 +30,8 @@
 | [RAG 注入检测器](03-agent-rag-security/rag-injection-detector/) | Agent/RAG 安全 | 知识库投毒劫持模型 → 可扫描文件的注入检测工具 |
 | [Agent 工具调用权限审计](03-agent-rag-security/tool-permission-audit/) | Agent/RAG 安全 | 被劫持 Agent 越权转账/删库 → 最小权限审计拦截(LLM06) |
 | [端到端安全 Agent 管线](03-agent-rag-security/secure-agent-pipeline/) | Agent/RAG 安全 | 复用上两个工具 → 纵深防御:任一层失守另一层兜底(LLM01+06) |
+| [真实 RAG 系统](06-ai-development/real-rag-system/) | AI 开发 | 本地 embedding 语义检索 + DeepSeek 生成,真实可用的 RAG |
+| [真实 LLM 注入攻防验证](03-agent-rag-security/real-rag-injection/) | AI 开发 × 安全 | 真实 DeepSeek 被投毒文档劫持 → 检测器源头剔除(含 v1 被绕过→v2 加固) |
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
 
