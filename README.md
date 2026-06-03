@@ -34,6 +34,7 @@
 | [真实 LLM 注入攻防验证](03-agent-rag-security/real-rag-injection/) | AI 开发 × 安全 | 真实 DeepSeek 被投毒文档劫持 → 检测器源头剔除(含 v1 被绕过→v2 加固) |
 | [真实 Agent](06-ai-development/real-agent/) | AI 开发 | DeepSeek function calling 自主调用工具,完整 ReAct 循环 |
 | [文本对抗样本](07-ai-intrinsic-security/text-adversarial/) | AI 内生安全 | 形近字+拆字让分类器判错 → 对抗训练加固模型本身(ATLAS) |
+| [数据投毒](07-ai-intrinsic-security/data-poisoning/) | AI 内生安全 | 6 条毒样本让准确率 100%→62% → kNN 检测清洗恢复(LLM03) |
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
 
