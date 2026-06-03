@@ -29,6 +29,12 @@
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
 
+## ✍️ 文章与表达输出
+
+- [当 AI Agent 被劫持：用纵深防御守住"会动手的模型"](articles/agent-security-defense-in-depth.md) — 技术博客文章
+- [PPT 大纲 + 5 分钟面试口播稿](05-resume-interview/talk-deck-outline.md) — 面试/分享用
+- [简历项目话术](05-resume-interview/resume-bullets.md) — 5 条可直接写进简历的要点
+
 ## 🧭 每个模块的统一结构
 
 每个案例/工具尽量包含：
