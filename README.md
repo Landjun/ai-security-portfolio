@@ -32,6 +32,7 @@
 | [端到端安全 Agent 管线](03-agent-rag-security/secure-agent-pipeline/) | Agent/RAG 安全 | 复用上两个工具 → 纵深防御:任一层失守另一层兜底(LLM01+06) |
 | [真实 RAG 系统](06-ai-development/real-rag-system/) | AI 开发 | 本地 embedding 语义检索 + DeepSeek 生成,真实可用的 RAG |
 | [真实 LLM 注入攻防验证](03-agent-rag-security/real-rag-injection/) | AI 开发 × 安全 | 真实 DeepSeek 被投毒文档劫持 → 检测器源头剔除(含 v1 被绕过→v2 加固) |
+| [真实 Agent](06-ai-development/real-agent/) | AI 开发 | DeepSeek function calling 自主调用工具,完整 ReAct 循环 |
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
 
