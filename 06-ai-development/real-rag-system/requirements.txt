@@ -1,0 +1,5 @@
+# 真实 RAG 系统依赖
+openai>=1.0.0          # 用 OpenAI 兼容 SDK 调用 DeepSeek
+fastembed>=0.3.0       # 本地 embedding(CPU 友好,无需 GPU/torch)
+numpy>=1.24.0          # 向量检索(余弦相似度)
+python-dotenv>=1.0.0   # 从 .env 读取 API Key
