@@ -22,13 +22,13 @@
 
 | 模块 | 方向 | 状态 |
 |------|------|------|
-| [01 传统安全](01-traditional-security/) | Web/系统漏洞原理、复现、防护、检测 | 🚧 搭建中 |
+| [01 传统安全](01-traditional-security/) | Web/系统漏洞原理、复现、防护、检测 | ✅ 4 个案例 |
 | [02 AI 安全](02-ai-security/) | 提示注入、越狱、模型滥用等案例研究 | ✅ 2 个案例 |
-| [03 Agent / RAG 安全](03-agent-rag-security/) | AI Agent / RAG 系统的安全工具与防护 | ✅ 3 个工具 |
-| [04 运营 AI 提效](04-ops-ai-efficiency/) | 教学运营场景的 AI 自动化案例 | 🚧 搭建中 |
+| [03 Agent / RAG 安全](03-agent-rag-security/) | AI Agent / RAG 系统的安全工具与防护 | ✅ 7 个工具 |
+| [04 运营 AI 提效](04-ops-ai-efficiency/) | 教学运营场景的 AI 自动化案例 | ✅ 2 个案例 |
 | [05 简历与面试](05-resume-interview/) | 简历项目描述、面试表达、作品集话术 | ✅ 进行中 |
-| [06 AI 开发](06-ai-development/) | 真实 LLM 应用 / RAG / Agent / 微调 | 🚧 待建 |
-| [07 AI 内生安全](07-ai-intrinsic-security/) | 对抗样本 / 投毒 / 后门 / 隐私 / 模型窃取 | 🚧 待建 |
+| [06 AI 开发](06-ai-development/) | 真实 LLM 应用 / RAG / Agent / 微调 | ✅ 2 个项目 |
+| [07 AI 内生安全](07-ai-intrinsic-security/) | 对抗样本 / 投毒 / 后门 / 隐私 / 模型窃取 | ✅ 7 个实验 |
 
 > 📌 完整成长路线见 **[ROADMAP.md](ROADMAP.md)**（求职导向 · 分阶段 · 持续打勾）。
 
