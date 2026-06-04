@@ -37,6 +37,7 @@
 | [数据投毒](07-ai-intrinsic-security/data-poisoning/) | AI 内生安全 | 6 条毒样本让准确率 100%→62% → kNN 检测清洗恢复(LLM03) |
 | [后门/木马攻击](07-ai-intrinsic-security/backdoor-attack/) | AI 内生安全 | 秘密触发器隐蔽埋后门(干净100%)→ 翻转测试自动揪出(ATLAS) |
 | [成员推断攻击](07-ai-intrinsic-security/membership-inference/) | AI 内生安全·隐私 | 靠自信度判断样本是否被训练过 AUC 0.93 → 正则化降到 0.56 |
+| [模型窃取](07-ai-intrinsic-security/model-extraction/) | AI 内生安全 | 黑盒查询蒸馏复制模型(保真度 95%)→ 限流/输出扰动防御 |
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
 
