@@ -52,6 +52,7 @@
 | [自动化红队](07-ai-intrinsic-security/auto-redteam/) | AI 内生安全 | 批量变体轰炸自有检测器,量化绕过率 31% 定位致命弱点(ATLAS) |
 | [ML 语义注入检测器](03-agent-rag-security/ml-injection-detector/) | AI 开发 × 安全 | 语义 embedding+LR 把红队绕过率 53%→0%、零误报(Roadmap 3.1 闭环) |
 | [真实 Agent 越权攻防](03-agent-rag-security/real-agent-audit/) | AI 开发 × 安全 | 真实 DeepSeek Agent 被劫持越权退款 → 审计器执行前拦截(LLM06) |
+| [LLM 安全网关](03-agent-rag-security/llm-security-gateway/) | 工程化收口 | 输入/动作/输出三关卡封装成统一中间件 + HTTP API(Roadmap 3.2) |
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
 
