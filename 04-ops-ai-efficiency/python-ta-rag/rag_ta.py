@@ -26,11 +26,27 @@ sys.path.insert(0, os.path.join(
     "..", "..", "03-agent-rag-security", "llm-security-gateway"))
 from gateway import SecurityGateway
 
+import re
+
 EMBED_MODEL = "BAAI/bge-small-zh-v1.5"
 CHAT_MODEL = "deepseek-chat"
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 TOP_K = 3
 RELEVANCE_THRESHOLD = 0.42   # 低于此相似度视为"超纲",拒答防幻觉
+
+# 领域合规护栏:命中"绕过访问控制"类意图(破解/逆向/绕过/采集VIP付费)直接给合规引导,
+# 不依赖检索碰运气,也绝不输出绕过方法。
+_CIRCUMVENT = r"(破解|逆向|绕过|crack|破译|盗用|白嫖)"
+_PROTECTED = r"(vip|会员|付费|sign|签名|加密参数|验证码|登录验证|风控)"
+COMPLIANCE_RE = re.compile(
+    _CIRCUMVENT + r".{0,8}" + _PROTECTED + r"|" + _PROTECTED + r".{0,8}" + _CIRCUMVENT +
+    r"|(vip|会员|付费).{0,6}(采集|爬|抓取|下载)|(采集|爬取|抓取|下载).{0,6}(vip|会员|付费)"
+    r"|逆向.{0,4}(sign|算法)", re.I)
+COMPLIANCE_MSG = (
+    "这类操作涉及绕过网站访问控制(如破解加密/逆向签名/绕过登录验证/采集付费会员内容),"
+    "存在法律风险,本助教不提供具体方法。\n"
+    "正确做法:优先使用平台官方开放 API、申请数据授权,或换用公开合规的数据源;"
+    "学习请聚焦在合规爬取公开数据的通用技术(requests、解析、Selenium、数据清洗等)。")
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _CACHE = os.path.join(_HERE, ".cache")
@@ -92,6 +108,14 @@ class PythonTA:
                 "answer": "检测到可疑输入(疑似提示注入/越狱),已拦截。请输入正常的 Python 学习问题。",
                 "sources": [], "in_scope": False, "blocked": True,
                 "reasons": gate.reasons, "best_score": 0.0,
+            }
+
+        # 领域合规护栏:绕过访问控制类意图,直接给合规引导(不检索、不生成绕过方法)
+        if COMPLIANCE_RE.search(question or ""):
+            return {
+                "answer": COMPLIANCE_MSG,
+                "sources": [("爬虫法律与道德红线", None)],
+                "in_scope": True, "blocked": False, "compliance": True, "best_score": 1.0,
             }
 
         hits = self.retrieve(question)
