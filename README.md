@@ -7,6 +7,17 @@
 半年到一年内转型 **AI 安全 / AI Agent 工程师**，长期深耕传统安全、AI 安全、区块链安全。
 所有产出遵循一条原则：**学到的东西，必须变成可展示的成果。**
 
+## 🧱 能力三层总览(会造 · 会防应用 · 会攻防模型)
+
+```
+第三层 · AI 内生安全   对抗样本 / 数据投毒 / 后门 / 成员推断 / 模型窃取 / 自动化红队
+第二层 · AI 应用安全   提示注入 / 越狱 / RAG 注入检测 / Agent 权限审计 / 纵深防御 / 真实LLM验证
+第一层 · AI 开发       真实 RAG(embedding+检索+生成) / 真实 Agent(function calling)
+```
+
+> 全部纯 Python、可本地复现;模型层实验零 GPU(scikit-learn)。
+> 📌 [项目地图 + STAR 故事集](05-resume-interview/project-map.md) · [成长路线 ROADMAP](ROADMAP.md)
+
 ## 📂 模块导航
 
 | 模块 | 方向 | 状态 |
@@ -45,6 +56,8 @@
 ## ✍️ 文章与表达输出
 
 - [当 AI Agent 被劫持：用纵深防御守住"会动手的模型"](articles/agent-security-defense-in-depth.md) — 技术博客文章（📤 待发布，见[发布指南](articles/PUBLISH-GUIDE.md)）
+- [纯 Python 复现 AI 内生安全的六大攻击面](articles/ai-intrinsic-security-six-attacks.md) — 内生安全长文（📤 待发布）
+- [项目地图 + STAR 面试故事集](05-resume-interview/project-map.md) — 三层能力总览与面试故事
 - [PPT 大纲 + 5 分钟面试口播稿](05-resume-interview/talk-deck-outline.md) — 面试/分享用
 - [简历项目话术](05-resume-interview/resume-bullets.md) — 5 条可直接写进简历的要点
 
