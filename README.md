@@ -48,6 +48,7 @@
 | [数据投毒](07-ai-intrinsic-security/data-poisoning/) | AI 内生安全 | 6 条毒样本让准确率 100%→62% → kNN 检测清洗恢复(LLM03) |
 | [后门/木马攻击](07-ai-intrinsic-security/backdoor-attack/) | AI 内生安全 | 秘密触发器隐蔽埋后门(干净100%)→ 翻转测试自动揪出(ATLAS) |
 | [成员推断攻击](07-ai-intrinsic-security/membership-inference/) | AI 内生安全·隐私 | 靠自信度判断样本是否被训练过 AUC 0.93 → 正则化降到 0.56 |
+| [差分隐私训练 DP-SGD](07-ai-intrinsic-security/dp-sgd/) | AI 内生安全·隐私 | 手写DP-SGD裁剪+加噪,成员推断 AUC 0.58→0.51,量化隐私-效用权衡 |
 | [模型窃取](07-ai-intrinsic-security/model-extraction/) | AI 内生安全 | 黑盒查询蒸馏复制模型(保真度 95%)→ 限流/输出扰动防御 |
 | [自动化红队](07-ai-intrinsic-security/auto-redteam/) | AI 内生安全 | 批量变体轰炸自有检测器,量化绕过率 31% 定位致命弱点(ATLAS) |
 | [ML 语义注入检测器](03-agent-rag-security/ml-injection-detector/) | AI 开发 × 安全 | 语义 embedding+LR 把红队绕过率 53%→0%、零误报(Roadmap 3.1 闭环) |
