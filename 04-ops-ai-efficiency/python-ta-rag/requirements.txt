@@ -1,0 +1,5 @@
+# Python 答疑助教 RAG 依赖
+openai>=1.0.0          # 调用 DeepSeek(OpenAI 兼容)
+fastembed>=0.3.0       # 本地中文 embedding(CPU,无需 GPU)
+numpy>=1.24.0          # 向量检索 + 索引缓存
+python-dotenv>=1.0.0   # 读取 .env 中的 API Key

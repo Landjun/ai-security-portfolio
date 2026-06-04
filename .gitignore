@@ -6,6 +6,9 @@
 *.pem
 secrets.*
 
+# ---- RAG 向量索引缓存(本地生成,不提交)----
+.cache/
+
 # ---- Python ----
 __pycache__/
 *.py[cod]

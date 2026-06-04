@@ -1,0 +1,124 @@
+"""
+rag_ta.py —— Python 答疑助教 RAG 引擎。
+
+特性(面向"替代助教"的真实需求):
+1. 知识库向量化 + 落盘缓存:知识库没变就秒级启动(不重复 embedding)。
+2. 语义检索:按意思而非关键词找最相关的文档。
+3. 检索增强生成:DeepSeek 基于检索到的资料作答,并标注来源。
+4. 超纲拒答(关键!):若最相关文档相似度低于阈值,直接回答"超出知识库范围,
+   请咨询人工助教",绝不编造 —— 这是答疑客服不能误导学员的底线。
+
+复用 06 的 DeepSeek key(06-ai-development/real-rag-system/.env)。
+"""
+
+import os
+
+import numpy as np
+from fastembed import TextEmbedding
+from openai import OpenAI
+
+from kb_loader import load_documents, kb_fingerprint
+
+EMBED_MODEL = "BAAI/bge-small-zh-v1.5"
+CHAT_MODEL = "deepseek-chat"
+DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+TOP_K = 3
+RELEVANCE_THRESHOLD = 0.42   # 低于此相似度视为"超纲",拒答防幻觉
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_CACHE = os.path.join(_HERE, ".cache")
+_ENV = os.path.join(os.path.dirname(_HERE), "..", "06-ai-development", "real-rag-system", ".env")
+
+
+def _cosine(a, b):
+    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-8))
+
+
+class PythonTA:
+    def __init__(self, verbose=True):
+        self.verbose = verbose
+        self.docs = load_documents()
+        self.embedder = TextEmbedding(model_name=EMBED_MODEL)
+        self.doc_vectors = self._build_index()
+        self.client = self._connect()
+
+    def _log(self, msg):
+        if self.verbose:
+            print(msg)
+
+    def _build_index(self):
+        """向量化知识库,带落盘缓存:知识库内容没变就直接读缓存。"""
+        fp = kb_fingerprint(self.docs)
+        os.makedirs(_CACHE, exist_ok=True)
+        cache_file = os.path.join(_CACHE, "index.npz")
+        if os.path.exists(cache_file):
+            data = np.load(cache_file, allow_pickle=True)
+            if str(data["fingerprint"]) == fp:
+                self._log(f"[索引] 命中缓存,知识库 {len(self.docs)} 篇文档秒级加载。")
+                return data["vectors"]
+        self._log(f"[索引] 知识库有更新,正在向量化 {len(self.docs)} 篇文档...")
+        texts = [d["title"] + "。" + d["content"] for d in self.docs]
+        vectors = np.array(list(self.embedder.embed(texts)))
+        np.savez(cache_file, vectors=vectors, fingerprint=fp)
+        return vectors
+
+    def _connect(self):
+        from dotenv import load_dotenv
+        load_dotenv(os.path.normpath(_ENV))
+        key = os.environ.get("DEEPSEEK_API_KEY")
+        if not key:
+            raise SystemExit(f"未找到 DEEPSEEK_API_KEY,请确认 {os.path.normpath(_ENV)}")
+        return OpenAI(api_key=key, base_url=DEEPSEEK_BASE_URL)
+
+    def retrieve(self, question, top_k=TOP_K):
+        q = list(self.embedder.embed([question]))[0]
+        scored = [(_cosine(q, v), d) for d, v in zip(self.docs, self.doc_vectors)]
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return scored[:top_k]
+
+    def answer(self, question):
+        hits = self.retrieve(question)
+        best_score = hits[0][0]
+
+        # 超纲拒答:最相关文档都不够相关 -> 不编造
+        if best_score < RELEVANCE_THRESHOLD:
+            return {
+                "answer": "这个问题超出了当前 Python 教学知识库的范围,建议咨询人工助教老师。",
+                "sources": [], "in_scope": False, "best_score": best_score,
+            }
+
+        context = "\n\n".join(f"【{d['title']}】\n{d['content']}" for _, d in hits)
+        system = (
+            "你是耐心、严谨的 Python 编程助教,负责给零基础学员答疑。"
+            "只能依据下面提供的【知识库资料】回答,用简洁清晰的中文,必要时给出代码示例。"
+            "如果资料中没有相关信息,直接说'知识库中暂无相关信息,请咨询人工助教',不要编造。"
+        )
+        user = f"知识库资料:\n{context}\n\n学员问题:{question}"
+        resp = self.client.chat.completions.create(
+            model=CHAT_MODEL,
+            messages=[{"role": "system", "content": system},
+                      {"role": "user", "content": user}],
+            temperature=0.2,
+        )
+        return {
+            "answer": resp.choices[0].message.content.strip(),
+            "sources": [(d["title"], round(s, 3)) for s, d in hits],
+            "in_scope": True, "best_score": best_score,
+        }
+
+
+if __name__ == "__main__":
+    ta = PythonTA()
+    samples = [
+        "pip 安装太慢了怎么办?",
+        "为什么我的代码报 IndentationError?",
+        "return 和 print 有什么区别",
+        "今天晚饭吃什么比较好?",   # 超纲,应拒答
+    ]
+    for q in samples:
+        print("=" * 60)
+        print("学员:", q)
+        r = ta.answer(q)
+        if r["sources"]:
+            print("参考来源:", ", ".join(f"{t}({s})" for t, s in r["sources"]))
+        print("助教:", r["answer"])
