@@ -17,6 +17,8 @@ def load_documents():
     for name in sorted(os.listdir(KB_DIR)):
         if not name.endswith(".md"):
             continue
+        if name.startswith("_"):      # 下划线开头的是模板/草稿,不入库
+            continue
         path = os.path.join(KB_DIR, name)
         with open(path, encoding="utf-8") as f:
             content = f.read().strip()

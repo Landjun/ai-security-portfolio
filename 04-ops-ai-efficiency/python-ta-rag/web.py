@@ -102,4 +102,8 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    import threading
+    import webbrowser
+    # 启动后自动打开浏览器,方便演示/截图
+    threading.Timer(1.0, lambda: webbrowser.open("http://127.0.0.1:8800")).start()
     ThreadingHTTPServer(("127.0.0.1", 8800), Handler).serve_forever()
