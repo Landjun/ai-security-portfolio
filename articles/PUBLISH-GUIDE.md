@@ -1,7 +1,15 @@
-# 发布工具包:AI Agent 纵深防御文章
+# 发布工具包(两篇技术文章)
 
-> 配套文章:[agent-security-defense-in-depth.md](agent-security-defense-in-depth.md)
+> 已就绪、可发布的两篇文章(同一套发布流程):
+> 1. [当 AI Agent 被劫持:纵深防御](agent-security-defense-in-depth.md) —— 应用/Agent 安全向
+> 2. [纯 Python 复现 AI 内生安全六大攻击面](ai-intrinsic-security-six-attacks.md) —— 内生安全向(更硬核,更适合建立专业形象)
+>
 > 目标平台:掘金 / 知乎 / 公众号。本文件帮你"复制即发",不替代你本人发布。
+> 两篇文末引流钩子均已指向真实仓库 https://github.com/Landjun/ai-security-portfolio。
+> 建议发布顺序:先发第 2 篇(内生安全,差异化强)立人设,再发第 1 篇。
+>
+> 下面的标题/标签/封面以第 1 篇为例;第 2 篇可用标题:
+> 《纯 Python 复现 AI 内生安全六大攻击面(对抗/投毒/后门/隐私/窃取/红队)》,标签同理加 `机器学习`。
 
 ---
 
@@ -66,7 +74,7 @@
 
 > 全部代码纯 Python、零依赖、无需 API Key,本地一条命令即可复现攻击与防御。
 > 完整作品集(提示注入 / 越狱 / RAG 注入检测 / 工具权限审计 / 端到端管线)见:
-> 👉 GitHub:`<你的仓库链接>`
+> 👉 GitHub:https://github.com/Landjun/ai-security-portfolio
 > 我正在从传统安全转型 AI 安全,欢迎交流。
 
 ## 8. 分步发布指南(以掘金为例)

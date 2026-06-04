@@ -102,5 +102,6 @@ AI Agent 把大模型从"嘴"变成了"手"。给"手"装上最小权限的闸�
 ---
 
 > 全部代码(提示注入、越狱、RAG 注入检测、工具权限审计、端到端管线)均纯 Python、
-> 零依赖、无需 API Key,可本地一键复现。仓库:`ai-security-portfolio`。
+> 零依赖、无需 API Key,可本地一键复现。
+> 👉 GitHub:https://github.com/Landjun/ai-security-portfolio
 > 对应 OWASP LLM Top 10:LLM01(提示注入)、LLM06(过度授权)。

@@ -103,5 +103,5 @@ AI 内生安全不神秘:用最朴素的工具,也能把对抗、投毒、后门
 以及怎么系统地防"。
 
 > 全部代码纯 Python、零 GPU、可本地复现。完整作品集(含真实 RAG/Agent 与应用层攻防):
-> 👉 GitHub:`<你的仓库链接>`
+> 👉 GitHub:https://github.com/Landjun/ai-security-portfolio
 > 对应 OWASP ML/LLM Top 10、MITRE ATLAS。欢迎交流。
