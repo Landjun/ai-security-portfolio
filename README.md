@@ -61,7 +61,9 @@
 
 - [当 AI Agent 被劫持：用纵深防御守住"会动手的模型"](articles/agent-security-defense-in-depth.md) — 技术博客文章（📤 待发布，见[发布指南](articles/PUBLISH-GUIDE.md)）
 - [纯 Python 复现 AI 内生安全的六大攻击面](articles/ai-intrinsic-security-six-attacks.md) — 内生安全长文（📤 待发布）
+- [我做了一个"会拒绝学员"的 Python 答疑 AI](articles/python-ta-rag-build.md) — RAG 产品向，最易传播（📤 待发布）
 - [项目地图 + STAR 面试故事集](05-resume-interview/project-map.md) — 三层能力总览与面试故事
+- [投递话术与自我介绍模板](05-resume-interview/hr-outreach.md) — 打招呼/求职信/投递清单
 - [可直接粘贴的简历项目经历](05-resume-interview/resume-project-section.md) — 精简/标准/完整三档
 - [PPT 大纲 + 5 分钟面试口播稿](05-resume-interview/talk-deck-outline.md) — 面试/分享用
 - [简历项目话术](05-resume-interview/resume-bullets.md) — 5 条可直接写进简历的要点

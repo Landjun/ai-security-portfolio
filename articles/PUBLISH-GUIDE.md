@@ -1,8 +1,9 @@
 # 发布工具包(两篇技术文章)
 
-> 已就绪、可发布的两篇文章(同一套发布流程):
+> 已就绪、可发布的三篇文章(同一套发布流程):
 > 1. [当 AI Agent 被劫持:纵深防御](agent-security-defense-in-depth.md) —— 应用/Agent 安全向
-> 2. [纯 Python 复现 AI 内生安全六大攻击面](ai-intrinsic-security-six-attacks.md) —— 内生安全向(更硬核,更适合建立专业形象)
+> 2. [纯 Python 复现 AI 内生安全六大攻击面](ai-intrinsic-security-six-attacks.md) —— 内生安全向(更硬核,建立专业形象)
+> 3. [会拒绝学员的 Python 答疑 AI](python-ta-rag-build.md) —— RAG 产品向(**最接地气、最易传播、涨粉首选**)
 >
 > 目标平台:掘金 / 知乎 / 公众号。本文件帮你"复制即发",不替代你本人发布。
 > 两篇文末引流钩子均已指向真实仓库 https://github.com/Landjun/ai-security-portfolio。
