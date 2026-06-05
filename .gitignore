@@ -13,6 +13,9 @@ secrets.*
 SCAN-REPORT.md
 REPORT.md
 
+# ---- 下载的本地模型(可按 README 重新下载)----
+bert-tiny-local/
+
 # ---- Python ----
 __pycache__/
 *.py[cod]

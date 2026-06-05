@@ -20,6 +20,14 @@
 
 这套"发现→量化→定位→根治"的闭环,是把前沿手法落地的核心,贯穿本作品集每个实验。
 
+## 前沿手法笔记(跟踪 + 关联我的复现)
+
+| 手法 | 笔记 | 我的关联复现 |
+|------|------|--------------|
+| Many-shot 越狱(长上下文) | [many-shot-jailbreak](many-shot-jailbreak.md) | 越狱实验 / 自动化红队 |
+| 对抗后缀 GCG(梯度搜索越狱) | [adversarial-suffix-gcg](adversarial-suffix-gcg.md) | 文本对抗样本 / 对抗训练 |
+| 间接注入数据外泄 | [indirect-injection-data-exfiltration](indirect-injection-data-exfiltration.md) | 真实 RAG 注入 / 多智能体 / 安全网关 |
+
 ## 新增笔记
 
 照 [`_template.md`](_template.md) 新建笔记:每读到一个新手法,写一篇"原理+我的复现+防御+转化"。

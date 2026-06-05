@@ -39,10 +39,36 @@ python lora_demo.py
 > 所以低秩增量就够用。真实大模型矩阵巨大,LoRA 可训练参数常不到 1%,这就是为什么能用消费级
 > 显卡微调大模型。工程上我也清楚生产会用 peft/transformers,但手写让我真正理解了它为什么有效。"
 
-## 下一步(可扩展)
+## 真实工具链版(`real_lora_peft.py`)
 
-- [ ] 用 `peft` + `transformers` 对一个小模型(如 distilbert)做真实 LoRA 微调(需 GPU 更佳)
-- [ ] 对比不同秩 r 的"参数量 vs 效果"权衡曲线
+除了 numpy 手写机制,还有一个**生产级工具链**的真实 LoRA 微调:用 `torch + transformers + peft`
+对真实小模型 **bert-tiny** 做垃圾短信二分类的 LoRA 适配(CPU 可跑)。
+
+实测结果:
+```
+trainable params: 8,450 || all params: 4,394,628 || trainable%: 0.19%
+测试准确率: 100%
+```
+> **LoRA 只训练 0.19% 的参数**(冻结主干、只训适配器),就完成了微调——这正是 LoRA 的核心价值。
+
+```powershell
+# 1) 下载 bert-tiny 到本地(transformers 直连不稳时,用直链下载)
+$base="https://hf-mirror.com/prajjwal1/bert-tiny/resolve/main"
+mkdir bert-tiny-local
+curl -L "$base/config.json"  -o bert-tiny-local/config.json
+curl -L "$base/vocab.txt"    -o bert-tiny-local/vocab.txt
+curl -L "$base/pytorch_model.bin" -o bert-tiny-local/pytorch_model.bin
+# (脚本会自动从 vocab.txt 生成 tokenizer.json;config 若缺 model_type 需补 "bert")
+# 2) 微调
+python real_lora_peft.py
+```
+依赖:`pip install torch --index-url https://download.pytorch.org/whl/cpu` + `transformers peft`。
+> `bert-tiny-local/` 是下载的模型,已 gitignore;按上方步骤可复现。
+
+## 两个版本互补
+
+- `lora_demo.py`(numpy 手写):证明**懂机制**(冻结 W0、低秩 ΔW=B·A、参数效率)。
+- `real_lora_peft.py`(peft 工具链):证明**会用生产工具**做真实模型微调。
 
 ## 安全边界
 纯本地数值演示,无外部依赖,不涉及任何真实数据/模型。
