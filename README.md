@@ -81,6 +81,7 @@ python -m unittest discover -s tests -v
 | [AI Agent 代码审计](03-agent-rag-security/agent-code-audit/) | 代码审计 | 故意有漏洞的Agent(7类漏洞)+ 扫描器 + 审计报告(eval/SSRF/SQL/pickle/越权) |
 | [LangChain Agent](06-ai-development/langchain-agent/) | AI 开发 | LangChain+DeepSeek 工具调用 Agent,工具执行前接权限审计 |
 | [AI 赋能安全自动化](06-ai-development/ai-assisted-security/) | AI 开发 × 安全 | AI 辅助漏洞情报分析 + AI 辅助代码审计(静态+语义混合) |
+| [LoRA 微调(numpy手写)](06-ai-development/lora-finetune/) | AI 开发 | 手写低秩适配,6% 参数逼近全量微调,演示 LoRA 机制 |
 | [传统安全靶场 ×8](01-traditional-security/) | 传统安全 | SQLi/XSS/命令注入/路径穿越/SSRF/文件上传/反序列化/SSTI |
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
@@ -91,6 +92,7 @@ python -m unittest discover -s tests -v
 - [纯 Python 复现 AI 内生安全的六大攻击面](articles/ai-intrinsic-security-six-attacks.md) — 内生安全长文（📤 待发布）
 - [我做了一个"会拒绝学员"的 Python 答疑 AI](articles/python-ta-rag-build.md) — RAG 产品向，最易传播（📤 待发布）
 - [从"手动发现"到"自动根治"：一次完整的 LLM 注入攻防闭环](articles/real-llm-injection-closed-loop.md) — 方法论深度文（📤 待发布）
+- [AI 安全评测：从"会单点攻击"到"能体系化交付"](articles/ai-security-assessment-system.md) — 评测体系深度文（📤 待发布）
 - [零基础的我，如何用一个多月搭出一个 AI 安全作品集](articles/from-zero-to-ai-security-portfolio.md) — 转型故事，私域/涨粉向（📤 待发布）
 - [项目地图 + STAR 面试故事集](05-resume-interview/project-map.md) — 三层能力总览与面试故事
 - [投递话术与自我介绍模板](05-resume-interview/hr-outreach.md) — 打招呼/求职信/投递清单

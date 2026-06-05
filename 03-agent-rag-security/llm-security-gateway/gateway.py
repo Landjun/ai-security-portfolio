@@ -56,8 +56,16 @@ class Decision:
 
 
 class SecurityGateway:
-    def __init__(self):
+    def __init__(self, rate_limit_per_min=None, ml_detector=None):
+        """
+        rate_limit_per_min: 每个 client 每分钟最大请求数(None=不限速)。
+        ml_detector: 可插拔的输入检测器,需有 is_injection(text)->bool;
+                     传入则输入护栏改用语义 ML 检测(默认用 regex)。
+        """
         self.log = []
+        self.rate_limit = rate_limit_per_min
+        self.ml_detector = ml_detector
+        self._hits = {}        # client_id -> [时间戳...](滑动窗口限速)
 
     def _record(self, decision, target):
         self.log.append({
@@ -65,15 +73,34 @@ class SecurityGateway:
             "status": decision.status, "target": target, "reasons": decision.reasons,
         })
 
-    # 1) 输入护栏
+    # 0) 速率限制(防滥用/模型窃取式高频查询)
+    def check_rate(self, client_id: str = "default") -> Decision:
+        if self.rate_limit is None:
+            return Decision("速率限制", "allow")
+        now = time.time()
+        hits = [t for t in self._hits.get(client_id, []) if now - t < 60]
+        hits.append(now)
+        self._hits[client_id] = hits
+        if len(hits) > self.rate_limit:
+            d = Decision("速率限制", "deny", [f"超过每分钟 {self.rate_limit} 次"])
+        else:
+            d = Decision("速率限制", "allow")
+        self._record(d, client_id)
+        return d
+
+    # 1) 输入护栏(regex 默认;传入 ml_detector 则用语义检测)
     def check_input(self, text: str) -> Decision:
         reasons = []
-        inj, inj_cats = scan_text(text)
-        jb, jb_cats = jb_detect(text)
-        if inj:
-            reasons.append("提示注入:" + ",".join(inj_cats))
-        if jb:
-            reasons.append("越狱:" + ",".join(jb_cats))
+        if self.ml_detector is not None:
+            if self.ml_detector.is_injection(text):
+                reasons.append("ML语义检测:疑似注入/越狱")
+        else:
+            inj, inj_cats = scan_text(text)
+            jb, jb_cats = jb_detect(text)
+            if inj:
+                reasons.append("提示注入:" + ",".join(inj_cats))
+            if jb:
+                reasons.append("越狱:" + ",".join(jb_cats))
         d = Decision("输入护栏", "block" if reasons else "allow", reasons)
         self._record(d, text)
         return d

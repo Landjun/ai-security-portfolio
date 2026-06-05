@@ -35,10 +35,12 @@ ai-security-assessment/
 逐条判定 blocked/controlled/allowed,算出**安全得分**并生成报告。
 
 ```powershell
-python scanner.py            # 控制台打分(示例:10/10 = 100%)
+python scanner.py            # 护栏组件打分(示例:10/10 = 100%)
 python scanner.py --report   # 额外生成 SCAN-REPORT.md
+python scan_realrag.py       # 【端到端】把载荷打进真实 DeepSeek RAG(实测 6/6)
 ```
 > 把它纳入回归:每次改护栏后重跑,确保安全得分不下降;再配 auto-redteam 量化绕过率。
+> `scan_realrag.py` 评测的是**真实 AI 系统**的整体行为(拦截注入/越狱、合规引导、超纲拒答、正常作答),而非只测组件。
 
 ## 用例库覆盖(13 条,关联作品集 demo)
 
