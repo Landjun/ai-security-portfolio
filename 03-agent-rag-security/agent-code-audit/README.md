@@ -14,10 +14,21 @@ JD 要求"代码审计 + 漏洞挖掘",且会问"**审计一个 AI Agent 框架,
 ```
 agent-code-audit/
 ├── vulnerable_agent.py  # 故意有漏洞的 Agent 工具实现(7 类漏洞)·仅审计用,勿运行
+├── secure_agent.py      # 安全修复版(逐项修掉 7 类漏洞)→ 复扫 0 发现
 ├── audit_scan.py        # 半自动化审计扫描器(危险模式静态检测)
 ├── AUDIT-REPORT.md      # 人工代码审计报告(逐项:数据流/风险/PoC/修复/评级)
 └── README.md
 ```
+
+## 修复闭环(审计 → 修复 → 复测)
+
+```powershell
+python audit_scan.py vulnerable_agent.py   # 漏洞版:8 处发现(高6/中2)
+python audit_scan.py secure_agent.py       # 安全版:0 处发现
+```
+`secure_agent.py` 逐项修复:eval→ast.literal_eval、shell=True→参数列表、SSRF→URL白名单+拒内网、
+路径穿越→realpath边界校验、SQL→参数化、pickle→json、过度授权→金额上限+人工确认、硬编码→环境变量。
+**这就是完整的代码审计闭环:不止找出漏洞,还能修复并复测验证。**
 
 ## 审计 AI Agent 重点看什么(7 类风险)
 

@@ -9,6 +9,10 @@ secrets.*
 # ---- RAG 向量索引缓存(本地生成,不提交)----
 .cache/
 
+# ---- 评测/扫描运行时生成的报告 ----
+SCAN-REPORT.md
+REPORT.md
+
 # ---- Python ----
 __pycache__/
 *.py[cod]

@@ -24,8 +24,21 @@
 ai-security-assessment/
 ├── checklist.py   # 评测用例库:13 条用例,关联 OWASP + 可运行 demo + 缓解措施
 ├── assess.py      # 为目标系统生成结构化评测报告骨架(可填写)
+├── scanner.py     # 【可执行】自动跑攻击载荷、打分、出报告(评测体系落地为工具)
 └── README.md
 ```
+
+## 从"清单"到"可运行扫描器"(scanner.py)
+
+`checklist.py` 回答"该测什么";`scanner.py` 直接"自动测完给分数":
+对被测系统的安全护栏跑一批攻击载荷(注入/越狱/工具越权/机密泄露 + 误报检查),
+逐条判定 blocked/controlled/allowed,算出**安全得分**并生成报告。
+
+```powershell
+python scanner.py            # 控制台打分(示例:10/10 = 100%)
+python scanner.py --report   # 额外生成 SCAN-REPORT.md
+```
+> 把它纳入回归:每次改护栏后重跑,确保安全得分不下降;再配 auto-redteam 量化绕过率。
 
 ## 用例库覆盖(13 条,关联作品集 demo)
 
