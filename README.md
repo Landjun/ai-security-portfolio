@@ -1,5 +1,7 @@
 # AI 安全作品集 (AI Security Portfolio)
 
+[![CI](https://github.com/Landjun/ai-security-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/Landjun/ai-security-portfolio/actions/workflows/ci.yml)
+
 > 一个从传统安全到 AI 安全的转型作品集：把每一次学习都沉淀成**代码、文档、可复现环境与面试表达**。
 
 ## ⭐ 亮点速览
@@ -75,6 +77,7 @@ python -m unittest discover -s tests -v
 | [ML 语义注入检测器](03-agent-rag-security/ml-injection-detector/) | AI 开发 × 安全 | 语义 embedding+LR 把红队绕过率 53%→0%、零误报(Roadmap 3.1 闭环) |
 | [真实 Agent 越权攻防](03-agent-rag-security/real-agent-audit/) | AI 开发 × 安全 | 真实 DeepSeek Agent 被劫持越权退款 → 审计器执行前拦截(LLM06) |
 | [LLM 安全网关](03-agent-rag-security/llm-security-gateway/) | 工程化收口 | 输入/动作/输出三关卡封装成统一中间件 + HTTP API(Roadmap 3.2) |
+| [AI 系统安全评测体系](03-agent-rag-security/ai-security-assessment/) | 评测体系 | 资产→威胁→13条用例库→评级→报告,把攻防收口成可交付评测流程 |
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
 
@@ -87,6 +90,7 @@ python -m unittest discover -s tests -v
 - [零基础的我，如何用一个多月搭出一个 AI 安全作品集](articles/from-zero-to-ai-security-portfolio.md) — 转型故事，私域/涨粉向（📤 待发布）
 - [项目地图 + STAR 面试故事集](05-resume-interview/project-map.md) — 三层能力总览与面试故事
 - [投递话术与自我介绍模板](05-resume-interview/hr-outreach.md) — 打招呼/求职信/投递清单
+- [岗位 JD 能力缺口分析](05-resume-interview/jd-gap-analysis.md) — 对照 AI 安全攻防岗的强项/缺口/补齐路线
 - [可直接粘贴的简历项目经历](05-resume-interview/resume-project-section.md) — 精简/标准/完整三档
 - [PPT 大纲 + 5 分钟面试口播稿](05-resume-interview/talk-deck-outline.md) — 面试/分享用
 - [简历项目话术](05-resume-interview/resume-bullets.md) — 5 条可直接写进简历的要点
