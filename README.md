@@ -84,6 +84,7 @@ python -m unittest discover -s tests -v
 - [纯 Python 复现 AI 内生安全的六大攻击面](articles/ai-intrinsic-security-six-attacks.md) — 内生安全长文（📤 待发布）
 - [我做了一个"会拒绝学员"的 Python 答疑 AI](articles/python-ta-rag-build.md) — RAG 产品向，最易传播（📤 待发布）
 - [从"手动发现"到"自动根治"：一次完整的 LLM 注入攻防闭环](articles/real-llm-injection-closed-loop.md) — 方法论深度文（📤 待发布）
+- [零基础的我，如何用一个多月搭出一个 AI 安全作品集](articles/from-zero-to-ai-security-portfolio.md) — 转型故事，私域/涨粉向（📤 待发布）
 - [项目地图 + STAR 面试故事集](05-resume-interview/project-map.md) — 三层能力总览与面试故事
 - [投递话术与自我介绍模板](05-resume-interview/hr-outreach.md) — 打招呼/求职信/投递清单
 - [可直接粘贴的简历项目经历](05-resume-interview/resume-project-section.md) — 精简/标准/完整三档
