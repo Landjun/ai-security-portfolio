@@ -74,6 +74,15 @@
 ### 22. AI 系统安全评测体系 (评测体系 · 工程化) · [代码](../03-agent-rag-security/ai-security-assessment/)
 > 将作品集中的全部 AI 攻防实验收口成一套可交付的安全评测体系:资产枚举(模型/系统提示词/输入/RAG知识库/Agent工具/训练数据/输出/供应链)→ 威胁建模(OWASP LLM Top 10 / MITRE ATLAS)→ 13 条测试用例库(每条关联可运行 demo + 默认风险等级 + 缓解措施)→ 风险评级 → 自动生成可填写的评测报告骨架,整改后用自动化红队基准复测。把"单点攻击"升级为"体系化、可规模化的评测交付"。直接对应 AI 安全攻防岗 P0 能力"构建 AI 系统安全评测及漏洞挖掘体系"。
 
+### 23. AI Agent 代码审计 (代码审计 · 漏洞挖掘) · [代码](../03-agent-rag-security/agent-code-audit/)
+> 构建 AI Agent 代码审计案例:一个故意有漏洞的 Agent 工具实现(植入 7 类典型漏洞:eval 执行 LLM 输出、shell=True 命令注入、SSRF、路径穿越、SQL 注入、pickle 反序列化 RCE、退款工具过度授权)+ 自研半自动化静态扫描器(定位 8 处危险点)+ 人工审计报告(逐项数据流/PoC思路/修复/评级)。完整呈现"扫描定位→人工确认→评级→修复"的代码审计闭环,落在 AI Agent 差异化领域,直接回应"审计 AI Agent 重点看哪些风险点"。
+
+### 24. LangChain Agent (AI Native 技术栈) · [代码](../06-ai-development/langchain-agent/)
+> 用 LangChain(ChatOpenAI 接 DeepSeek + @tool + bind_tools + 消息/tool_calls 循环)实现工具调用 Agent,工具执行前接入权限审计——只读放行、退款等敏感动作人工确认、超额拦截。回应岗位点名的 LangChain/Agent 技术栈,并把"Agent 调高危工具如何做权限控制"落到可运行实现。
+
+### 25. 传统 Web 安全靶场 ×8 (攻防底座) · [代码](../01-traditional-security/)
+> 本地靶场复现并防御 8 类经典漏洞:SQL注入、XSS、命令注入、路径穿越、SSRF、文件上传、不安全反序列化、SSTI,每个均"不安全 vs 安全"可运行对比,对应 OWASP Top 10 A01/A03/A05/A08/A10,并配单元测试(全套 31 个)。夯实 AI 安全所需的传统攻防底座。
+
 ## 面试一句话电梯陈述
 
 > 我在从传统安全往 AI 安全转型，做了一个 AI 安全作品集：覆盖提示注入、越狱、RAG 间接注入等核心风险，每个都有可运行的攻防复现和多层防御方案，能对照 OWASP LLM Top 10 讲清原理、危害和工程化的防护落地。

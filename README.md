@@ -45,12 +45,12 @@ python -m unittest discover -s tests -v
 
 | 模块 | 方向 | 状态 |
 |------|------|------|
-| [01 传统安全](01-traditional-security/) | Web/系统漏洞原理、复现、防护、检测 | ✅ 4 个案例 |
+| [01 传统安全](01-traditional-security/) | Web/系统漏洞原理、复现、防护、检测 | ✅ 8 个案例 |
 | [02 AI 安全](02-ai-security/) | 提示注入、越狱、模型滥用等案例研究 | ✅ 2 个案例 |
 | [03 Agent / RAG 安全](03-agent-rag-security/) | AI Agent / RAG 系统的安全工具与防护 | ✅ 7 个工具 |
 | [04 运营 AI 提效](04-ops-ai-efficiency/) | 教学运营场景的 AI 自动化案例 | ✅ 2 个案例 |
 | [05 简历与面试](05-resume-interview/) | 简历项目描述、面试表达、作品集话术 | ✅ 进行中 |
-| [06 AI 开发](06-ai-development/) | 真实 LLM 应用 / RAG / Agent / 微调 | ✅ 2 个项目 |
+| [06 AI 开发](06-ai-development/) | 真实 LLM 应用 / RAG / Agent / 微调 | ✅ 3 个项目 |
 | [07 AI 内生安全](07-ai-intrinsic-security/) | 对抗样本 / 投毒 / 后门 / 隐私 / 模型窃取 | ✅ 7 个实验 |
 
 > 📌 完整成长路线见 **[ROADMAP.md](ROADMAP.md)**（求职导向 · 分阶段 · 持续打勾）。
@@ -78,6 +78,9 @@ python -m unittest discover -s tests -v
 | [真实 Agent 越权攻防](03-agent-rag-security/real-agent-audit/) | AI 开发 × 安全 | 真实 DeepSeek Agent 被劫持越权退款 → 审计器执行前拦截(LLM06) |
 | [LLM 安全网关](03-agent-rag-security/llm-security-gateway/) | 工程化收口 | 输入/动作/输出三关卡封装成统一中间件 + HTTP API(Roadmap 3.2) |
 | [AI 系统安全评测体系](03-agent-rag-security/ai-security-assessment/) | 评测体系 | 资产→威胁→13条用例库→评级→报告,把攻防收口成可交付评测流程 |
+| [AI Agent 代码审计](03-agent-rag-security/agent-code-audit/) | 代码审计 | 故意有漏洞的Agent(7类漏洞)+ 扫描器 + 审计报告(eval/SSRF/SQL/pickle/越权) |
+| [LangChain Agent](06-ai-development/langchain-agent/) | AI 开发 | LangChain+DeepSeek 工具调用 Agent,工具执行前接权限审计 |
+| [传统安全靶场 ×8](01-traditional-security/) | 传统安全 | SQLi/XSS/命令注入/路径穿越/SSRF/文件上传/反序列化/SSTI |
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
 

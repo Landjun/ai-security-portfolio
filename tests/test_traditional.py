@@ -88,5 +88,61 @@ class TestCommandInjection(unittest.TestCase):
         self.assertIn("report.txt && echo INJECTED", out)
 
 
+class TestSSRF(unittest.TestCase):
+    def setUp(self):
+        self.m = _load(os.path.join("ssrf", "demo.py"), "ssrf_demo")
+
+    def test_blocks_internal_targets(self):
+        for url in ("http://169.254.169.254/latest/meta-data/",
+                    "http://127.0.0.1:8080/admin", "http://192.168.1.1/",
+                    "file:///etc/passwd"):
+            ok, _ = self.m.is_safe_url(url)
+            self.assertFalse(ok, f"应拦截: {url}")
+
+    def test_allows_external(self):
+        ok, _ = self.m.is_safe_url("https://api.example.com/data")
+        self.assertTrue(ok)
+
+
+class TestFileUpload(unittest.TestCase):
+    def setUp(self):
+        self.m = _load(os.path.join("file-upload", "demo.py"), "fu_demo")
+
+    def test_secure_rejects_webshell(self):
+        self.assertIn("拒绝", self.m.save_secure("shell.php", b"<?php ?>"))
+        self.assertIn("拒绝", self.m.save_secure("evil.jpg.php", b"<?php ?>"))
+
+    def test_secure_rejects_fake_magic(self):
+        self.assertIn("拒绝", self.m.save_secure("fake.png", b"<?php ?>"))
+
+    def test_secure_accepts_valid_image(self):
+        out = self.m.save_secure("photo.jpg", b"\xff\xd8\xff\xe0JFIF")
+        self.assertIn("落地", out)
+
+
+class TestInsecureDeserialization(unittest.TestCase):
+    def setUp(self):
+        self.m = _load(os.path.join("insecure-deserialization", "demo.py"), "deser_demo")
+
+    def test_secure_json_only_returns_data(self):
+        data = self.m.load_secure('{"user": "alice"}')
+        self.assertEqual(data, {"user": "alice"})
+
+
+class TestSSTI(unittest.TestCase):
+    def setUp(self):
+        self.m = _load(os.path.join("ssti", "demo.py"), "ssti_demo")
+
+    def test_vulnerable_evaluates_expression(self):
+        self.assertEqual(self.m.render_vulnerable("{{7*7}}", "x"), "49")
+
+    def test_secure_does_not_evaluate(self):
+        out = self.m.render_secure("{{7*7}}", "x")
+        self.assertNotIn("49", out)         # 表达式未被求值
+
+    def test_secure_substitutes_whitelist_var(self):
+        self.assertIn("小明", self.m.render_secure("你好 {{name}}", "小明"))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
