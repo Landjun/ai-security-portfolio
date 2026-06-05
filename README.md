@@ -2,6 +2,25 @@
 
 > 一个从传统安全到 AI 安全的转型作品集：把每一次学习都沉淀成**代码、文档、可复现环境与面试表达**。
 
+## ⭐ 亮点速览
+
+- **AI 内生安全六大攻击面**全复现 + 防御(对抗/投毒/后门/成员推断/模型窃取/红队)+ 手写 DP-SGD
+- **真实 DeepSeek 上**验证提示注入 / 越狱 / RAG 注入 / Agent 越权攻防;正则检测器→ML 语义检测把红队绕过率 **53%→0%**
+- **LLM 安全网关**:输入护栏+动作审计+输出扫描统一中间件 + HTTP API
+- **Python 答疑客服**(旗舰):86 篇知识库 + 四道护栏(防幻觉/防注入/合规/溯源),评测正确率 95%
+- 约 21 个可运行项目 · 纯 Python · 模型层实验零 GPU
+
+## 🚀 快速开始
+
+```bash
+git clone https://github.com/Landjun/ai-security-portfolio
+cd ai-security-portfolio
+# 应用层安全 demo(无需任何依赖/Key)
+python 02-ai-security/prompt-injection/demo.py
+# AI 内生安全(需 scikit-learn)
+python 07-ai-intrinsic-security/backdoor-attack/demo.py
+```
+
 ## 🎯 目标
 
 半年到一年内转型 **AI 安全 / AI Agent 工程师**，长期深耕传统安全、AI 安全、区块链安全。
