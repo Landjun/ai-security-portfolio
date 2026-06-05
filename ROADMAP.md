@@ -47,7 +47,7 @@
 - [x] **3.1 ML 检测器**:把 regex 注入检测器升级为语义 ML 分类器，红队绕过率 53%→0% — ✅ [已完成](03-agent-rag-security/ml-injection-detector/)
 - [x] **3.2 LLM 安全网关 / 防火墙**:统一拦截层（输入护栏+动作审计+输出扫描）+ HTTP API — ✅ [已完成](03-agent-rag-security/llm-security-gateway/)
 - [ ] **3.3 评测体系**:对防护方案做量化评测（拦截率/误报率/绕过率）
-- [ ] **3.4 MCP / 多 Agent 安全**:工具协议安全、多智能体越权与隔离
+- [x] **3.4 多 Agent 安全**:跨智能体提示注入传播 + 智能体边界纵深防御 — ✅ [已完成](03-agent-rag-security/multi-agent-security/)
 
 ### 阶段 4 · 影响力与求职闭环（持续）
 - [ ] 每个项目一句简历话术 + 一篇短文

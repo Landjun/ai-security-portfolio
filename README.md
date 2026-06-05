@@ -78,7 +78,8 @@ python -m unittest discover -s tests -v
 | [真实 Agent 越权攻防](03-agent-rag-security/real-agent-audit/) | AI 开发 × 安全 | 真实 DeepSeek Agent 被劫持越权退款 → 审计器执行前拦截(LLM06) |
 | [LLM 安全网关](03-agent-rag-security/llm-security-gateway/) | 工程化收口 | 输入/动作/输出三关卡封装成统一中间件 + HTTP API(Roadmap 3.2) |
 | [AI 系统安全评测体系](03-agent-rag-security/ai-security-assessment/) | 评测体系 | 资产→威胁→13条用例库→评级→报告,把攻防收口成可交付评测流程 |
-| [AI Agent 代码审计](03-agent-rag-security/agent-code-audit/) | 代码审计 | 故意有漏洞的Agent(7类漏洞)+ 扫描器 + 审计报告(eval/SSRF/SQL/pickle/越权) |
+| [AI Agent 代码审计](03-agent-rag-security/agent-code-audit/) | 代码审计 | 故意有漏洞的Agent(7类漏洞)+ 扫描器 + 审计报告 + 修复闭环(8→0) |
+| [多智能体安全](03-agent-rag-security/multi-agent-security/) | 前沿·Agent安全 | 跨智能体提示注入传播(混淆代理)→ 智能体间净化+最小权限纵深防御 |
 | [LangChain Agent](06-ai-development/langchain-agent/) | AI 开发 | LangChain+DeepSeek 工具调用 Agent,工具执行前接权限审计 |
 | [AI 赋能安全自动化](06-ai-development/ai-assisted-security/) | AI 开发 × 安全 | AI 辅助漏洞情报分析 + AI 辅助代码审计(静态+语义混合) |
 | [LoRA 微调(numpy手写)](06-ai-development/lora-finetune/) | AI 开发 | 手写低秩适配,6% 参数逼近全量微调,演示 LoRA 机制 |
