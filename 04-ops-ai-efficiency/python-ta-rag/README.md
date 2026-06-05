@@ -54,6 +54,16 @@ python-ta-rag/
 
 > 📺 **演示**:见 [DEMO.md](DEMO.md) —— 4 步展示"会答 / 会拒 / 会防",适合截图或录屏放进作品集。
 
+## 演示截图
+
+| 正常答疑(带来源) | 超纲拒答(防幻觉) |
+|:--:|:--:|
+| ![正常答疑](screenshots/01-normal-answer.png) | ![超纲拒答](screenshots/02-out-of-scope.png) |
+| **安全护栏拦截注入** | **合规护栏拦截违规** |
+| ![注入拦截](screenshots/03-injection-blocked.png) | ![合规拦截](screenshots/04-compliance-blocked.png) |
+
+> 当前为占位图,跑 `python web.py` 截真实图覆盖 [screenshots/](screenshots/) 下同名文件即可。
+
 ## 实测效果
 
 | 学员问题 | 命中知识库 | 表现 |
