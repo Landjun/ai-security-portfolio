@@ -80,6 +80,7 @@ python -m unittest discover -s tests -v
 | [AI 系统安全评测体系](03-agent-rag-security/ai-security-assessment/) | 评测体系 | 资产→威胁→13条用例库→评级→报告,把攻防收口成可交付评测流程 |
 | [AI Agent 代码审计](03-agent-rag-security/agent-code-audit/) | 代码审计 | 故意有漏洞的Agent(7类漏洞)+ 扫描器 + 审计报告(eval/SSRF/SQL/pickle/越权) |
 | [LangChain Agent](06-ai-development/langchain-agent/) | AI 开发 | LangChain+DeepSeek 工具调用 Agent,工具执行前接权限审计 |
+| [AI 赋能安全自动化](06-ai-development/ai-assisted-security/) | AI 开发 × 安全 | AI 辅助漏洞情报分析 + AI 辅助代码审计(静态+语义混合) |
 | [传统安全靶场 ×8](01-traditional-security/) | 传统安全 | SQLi/XSS/命令注入/路径穿越/SSRF/文件上传/反序列化/SSTI |
 
 > 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
@@ -94,6 +95,8 @@ python -m unittest discover -s tests -v
 - [项目地图 + STAR 面试故事集](05-resume-interview/project-map.md) — 三层能力总览与面试故事
 - [投递话术与自我介绍模板](05-resume-interview/hr-outreach.md) — 打招呼/求职信/投递清单
 - [岗位 JD 能力缺口分析](05-resume-interview/jd-gap-analysis.md) — 对照 AI 安全攻防岗的强项/缺口/补齐路线
+- [JD 能力 ↔ 作品集 对照总表](05-resume-interview/jd-capability-map.md) — 逐条能力对应到具体产物(穷尽覆盖)
+- [AI 攻防 / CTF 比赛准备](05-resume-interview/ctf-prep.md) · [红蓝队方法论](01-traditional-security/methodology-redteam.md) · [前沿复现笔记](research-notes/)
 - [可直接粘贴的简历项目经历](05-resume-interview/resume-project-section.md) — 精简/标准/完整三档
 - [PPT 大纲 + 5 分钟面试口播稿](05-resume-interview/talk-deck-outline.md) — 面试/分享用
 - [简历项目话术](05-resume-interview/resume-bullets.md) — 5 条可直接写进简历的要点
