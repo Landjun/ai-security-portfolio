@@ -7,15 +7,19 @@ ai_coding_helper.py —— AI 编程小助手 MVP(对标 LangChain4j 教程,用 
     AI Service     -> AiCodingHelper 类,把"模型 + 记忆 + 系统提示 + 检索"封装成一个服务
     ChatMemory     -> ChatMemory 滑动窗口记忆,按 session_id 多会话隔离(对标 @MemoryId)
     RAG            -> 可选挂载 Retriever,检索知识库后把资料拼进提示(检索/生成解耦)
+    Tools          -> --tools 走 function calling,工具执行前过权限审计
+    Guardrail      -> --safe 输入拦提示注入 + 输出 DLP 脱敏(复用 02 安全模块)
     流式输出        -> stream=True,逐字打印(对标教程的 SSE 流式)
 
-教程里更进阶的 工具调用 / 护栏 / Web 前端,见 README 的「下一步路线图」,后续迭代加入。
+教程里更进阶的 Web 前端,见 README 的「下一步路线图」,后续迭代加入。
 
 运行:
     python ai_coding_helper.py                 # 交互式对话(默认会话)
     python ai_coding_helper.py "你的问题"       # 单轮提问后退出
-    python ai_coding_helper.py --rag           # 开启 RAG 的交互式对话
-    python ai_coding_helper.py --rag "你的问题"  # 开启 RAG 的单轮提问
+    python ai_coding_helper.py --rag           # 开启 RAG
+    python ai_coding_helper.py --tools         # 开启工具调用
+    python ai_coding_helper.py --safe          # 开启安全护栏(输入/输出)
+    # 开关可组合,如: python ai_coding_helper.py --rag --safe "你的问题"
 
 需要:本目录放一个 .env,内含 DEEPSEEK_API_KEY(见 .env.example)。
 """
@@ -65,7 +69,7 @@ class ChatMemory:
 class AiCodingHelper:
     """AI 服务:把『模型 + 系统提示 + 会话记忆 + (可选)检索』封装成一个可复用的服务对象。"""
 
-    def __init__(self, retriever=None, use_tools=False):
+    def __init__(self, retriever=None, use_tools=False, guardrails=False):
         api_key = os.environ.get("DEEPSEEK_API_KEY")
         if not api_key:
             raise SystemExit(
@@ -75,12 +79,39 @@ class AiCodingHelper:
         self.memory = ChatMemory()
         self.retriever = retriever  # 传入则启用 RAG;为 None 则纯对话
         self.use_tools = use_tools  # 开启则走 function calling 工具调用循环
+        self.guardrails = guardrails  # 开启则启用输入/输出安全护栏
+
+    def _guard_input(self, user_input: str):
+        """输入护栏:命中提示注入则返回拦截语,否则返回 None。"""
+        if not self.guardrails:
+            return None
+        from guardrails import check_input
+        ok, matched = check_input(user_input)
+        if not ok:
+            return f"【输入护栏拦截】检测到疑似提示注入,已拒绝。命中特征数:{len(matched)}"
+        return None
+
+    def _guard_output(self, text: str) -> str:
+        """输出护栏:对模型输出做 DLP 脱敏。"""
+        if not self.guardrails:
+            return text
+        from guardrails import filter_output
+        safe, hits = filter_output(text)
+        if hits:
+            safe += f"\n(输出护栏:已脱敏 {', '.join(hits)})"
+        return safe
 
     def chat(self, session_id: str, user_input: str, stream: bool = True) -> str:
         """
         一轮对话:系统提示 +(可选)检索资料 + 该会话历史 + 本次输入 -> 模型作答 -> 写回记忆。
         开启工具时走工具调用循环;否则按 stream 流式/非流式直接作答。
         """
+        # 输入护栏:疑似提示注入直接拦截,根本不喂给模型
+        blocked = self._guard_input(user_input)
+        if blocked is not None:
+            print(blocked)
+            return blocked
+
         if self.use_tools:
             return self._chat_with_tools(session_id, user_input)
 
@@ -101,7 +132,14 @@ class AiCodingHelper:
         else:
             messages.append({"role": "user", "content": user_input})
 
-        if stream:
+        # 开启输出护栏时改用非流式:拿到完整输出后做 DLP 脱敏再打印
+        if self.guardrails:
+            resp = self.client.chat.completions.create(
+                model=CHAT_MODEL, messages=messages, temperature=0.3
+            )
+            answer = self._guard_output(resp.choices[0].message.content)
+            print(answer)
+        elif stream:
             answer = self._chat_stream(messages)
         else:
             resp = self.client.chat.completions.create(
@@ -148,7 +186,7 @@ class AiCodingHelper:
             msg = resp.choices[0].message
 
             if not msg.tool_calls:          # 没有要调工具 -> 最终答案
-                answer = msg.content
+                answer = self._guard_output(msg.content)  # 输出护栏:最终答案脱敏
                 print(answer)
                 break
 
@@ -177,6 +215,8 @@ def interactive(helper: AiCodingHelper) -> None:
         parts.append("RAG")
     if helper.use_tools:
         parts.append("工具")
+    if helper.guardrails:
+        parts.append("护栏")
     mode = "+".join(parts) if parts else "纯对话"
     print(f"码小安 已就绪(模式:{mode})。输入问题开始对话;exit 退出,/clear 清空记忆。")
     print("-" * 60)
@@ -195,8 +235,8 @@ def interactive(helper: AiCodingHelper) -> None:
             helper.memory.clear(session_id)
             print("(已清空当前会话记忆)")
             continue
-        if helper.use_tools:
-            print("码小安:")
+        if helper.use_tools or helper.guardrails:
+            print("码小安:")  # 工具/护栏模式答案在内部整段打印
         else:
             print("码小安: ", end="", flush=True)
         helper.chat(session_id, user_input, stream=True)
@@ -206,22 +246,23 @@ def interactive(helper: AiCodingHelper) -> None:
 def main():
     load_dotenv()  # 从当前目录的 .env 读取 DEEPSEEK_API_KEY
 
-    # 解析开关:--rag 开启检索,--tools 开启工具调用;其余参数拼成单轮问题
+    # 解析开关:--rag 检索,--tools 工具调用,--safe 安全护栏;其余参数拼成单轮问题
     args = sys.argv[1:]
     use_rag = "--rag" in args
     use_tools = "--tools" in args
-    args = [a for a in args if a not in ("--rag", "--tools")]
+    guardrails = "--safe" in args
+    args = [a for a in args if a not in ("--rag", "--tools", "--safe")]
 
     retriever = None
     if use_rag:
         from retriever import Retriever  # 延迟导入:不开 RAG 就不加载 fastembed
         retriever = Retriever()
-    helper = AiCodingHelper(retriever=retriever, use_tools=use_tools)
+    helper = AiCodingHelper(retriever=retriever, use_tools=use_tools, guardrails=guardrails)
 
     if args:
         question = " ".join(args)
         print(f"你: {question}")
-        if use_tools:
+        if use_tools or guardrails:
             print("码小安:")
         else:
             print("码小安: ", end="", flush=True)
