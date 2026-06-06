@@ -1,18 +1,21 @@
 """
 ai_coding_helper.py —— AI 编程小助手 MVP(对标 LangChain4j 教程,用 Python 复刻)。
 
-对标教程的核心能力(本 MVP 已落地的部分):
+对标教程的核心能力(本项目已落地的部分):
     ChatModel      -> DeepSeek 对话模型(OpenAI 兼容,设 base_url)
     SystemMessage  -> SYSTEM_PROMPT,定义"编程学习导师"的人设与边界
-    AI Service     -> AiCodingHelper 类,把"模型 + 记忆 + 系统提示"封装成一个服务
+    AI Service     -> AiCodingHelper 类,把"模型 + 记忆 + 系统提示 + 检索"封装成一个服务
     ChatMemory     -> ChatMemory 滑动窗口记忆,按 session_id 多会话隔离(对标 @MemoryId)
+    RAG            -> 可选挂载 Retriever,检索知识库后把资料拼进提示(检索/生成解耦)
     流式输出        -> stream=True,逐字打印(对标教程的 SSE 流式)
 
-教程里更进阶的 RAG / 工具调用 / 护栏 / Web 前端,见 README 的「下一步路线图」,后续迭代加入。
+教程里更进阶的 工具调用 / 护栏 / Web 前端,见 README 的「下一步路线图」,后续迭代加入。
 
 运行:
-    python ai_coding_helper.py            # 进入交互式对话(默认会话)
-    python ai_coding_helper.py "你的问题"  # 单轮提问后退出
+    python ai_coding_helper.py                 # 交互式对话(默认会话)
+    python ai_coding_helper.py "你的问题"       # 单轮提问后退出
+    python ai_coding_helper.py --rag           # 开启 RAG 的交互式对话
+    python ai_coding_helper.py --rag "你的问题"  # 开启 RAG 的单轮提问
 
 需要:本目录放一个 .env,内含 DEEPSEEK_API_KEY(见 .env.example)。
 """
@@ -59,9 +62,9 @@ class ChatMemory:
 
 
 class AiCodingHelper:
-    """AI 服务:把『模型 + 系统提示 + 会话记忆』封装成一个可复用的服务对象。"""
+    """AI 服务:把『模型 + 系统提示 + 会话记忆 + (可选)检索』封装成一个可复用的服务对象。"""
 
-    def __init__(self):
+    def __init__(self, retriever=None):
         api_key = os.environ.get("DEEPSEEK_API_KEY")
         if not api_key:
             raise SystemExit(
@@ -69,15 +72,29 @@ class AiCodingHelper:
             )
         self.client = OpenAI(api_key=api_key, base_url=DEEPSEEK_BASE_URL)
         self.memory = ChatMemory()
+        self.retriever = retriever  # 传入则启用 RAG;为 None 则纯对话
 
     def chat(self, session_id: str, user_input: str, stream: bool = True) -> str:
         """
-        一轮对话:系统提示 + 该会话历史 + 本次输入 -> 模型作答 -> 把问答写回记忆。
+        一轮对话:系统提示 +(可选)检索资料 + 该会话历史 + 本次输入 -> 模型作答 -> 写回记忆。
         stream=True 时逐字打印(流式),返回拼好的完整答案。
         """
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         messages.extend(self.memory.history(session_id))
-        messages.append({"role": "user", "content": user_input})
+
+        # RAG:检索知识库,把相关资料作为本轮的额外上下文(检索/生成解耦)
+        if self.retriever is not None:
+            context = self.retriever.build_context(user_input)
+            if context:
+                turn = (
+                    "请优先依据下面的【知识库资料】回答;资料不足时再用你自己的知识补充,"
+                    f"不要编造。\n知识库资料:\n{context}\n\n我的问题:{user_input}"
+                )
+            else:
+                turn = user_input
+            messages.append({"role": "user", "content": turn})
+        else:
+            messages.append({"role": "user", "content": user_input})
 
         if stream:
             answer = self._chat_stream(messages)
@@ -110,7 +127,8 @@ class AiCodingHelper:
 def interactive(helper: AiCodingHelper) -> None:
     """交互式对话循环。输入 exit/quit 退出,输入 /clear 清空当前会话记忆。"""
     session_id = "cli-default"
-    print("码小安 已就绪。输入问题开始对话;exit 退出,/clear 清空记忆。")
+    mode = "RAG" if helper.retriever is not None else "纯对话"
+    print(f"码小安 已就绪(模式:{mode})。输入问题开始对话;exit 退出,/clear 清空记忆。")
     print("-" * 60)
     while True:
         try:
@@ -134,10 +152,20 @@ def interactive(helper: AiCodingHelper) -> None:
 
 def main():
     load_dotenv()  # 从当前目录的 .env 读取 DEEPSEEK_API_KEY
-    helper = AiCodingHelper()
 
-    if len(sys.argv) > 1:
-        question = " ".join(sys.argv[1:])
+    # 解析 --rag 开关(出现即开启 RAG),其余参数拼成单轮问题
+    args = sys.argv[1:]
+    use_rag = "--rag" in args
+    args = [a for a in args if a != "--rag"]
+
+    retriever = None
+    if use_rag:
+        from retriever import Retriever  # 延迟导入:不开 RAG 就不加载 fastembed
+        retriever = Retriever()
+    helper = AiCodingHelper(retriever=retriever)
+
+    if args:
+        question = " ".join(args)
         print(f"你: {question}")
         print("码小安: ", end="", flush=True)
         helper.chat("cli-oneshot", question, stream=True)

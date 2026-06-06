@@ -1,2 +1,4 @@
 openai>=1.40.0
 python-dotenv>=1.0.0
+fastembed>=0.3.0       # RAG 本地 embedding(CPU 友好,无需 GPU/torch)
+numpy>=1.24.0          # RAG 向量检索(余弦相似度)
