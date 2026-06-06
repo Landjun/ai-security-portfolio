@@ -43,3 +43,6 @@ Thumbs.db
 # ---- 日志 / 临时 ----
 *.log
 tmp/
+
+# 码小安工具生成的本地笔记(不提交)
+06-ai-development/ai-coding-helper/notes.md

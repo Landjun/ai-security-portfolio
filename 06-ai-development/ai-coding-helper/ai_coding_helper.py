@@ -31,6 +31,7 @@ from openai import OpenAI
 CHAT_MODEL = "deepseek-chat"
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 MEMORY_WINDOW = 20  # 每个会话最多记住最近 N 条消息(对标 MessageWindowChatMemory)
+MAX_TOOL_STEPS = 5  # 工具调用循环最大步数,防止无限循环
 
 # 系统提示词:定义编程小助手的人设、风格与边界(对标教程的 SystemMessage)
 SYSTEM_PROMPT = (
@@ -64,7 +65,7 @@ class ChatMemory:
 class AiCodingHelper:
     """AI 服务:把『模型 + 系统提示 + 会话记忆 + (可选)检索』封装成一个可复用的服务对象。"""
 
-    def __init__(self, retriever=None):
+    def __init__(self, retriever=None, use_tools=False):
         api_key = os.environ.get("DEEPSEEK_API_KEY")
         if not api_key:
             raise SystemExit(
@@ -73,12 +74,16 @@ class AiCodingHelper:
         self.client = OpenAI(api_key=api_key, base_url=DEEPSEEK_BASE_URL)
         self.memory = ChatMemory()
         self.retriever = retriever  # 传入则启用 RAG;为 None 则纯对话
+        self.use_tools = use_tools  # 开启则走 function calling 工具调用循环
 
     def chat(self, session_id: str, user_input: str, stream: bool = True) -> str:
         """
         一轮对话:系统提示 +(可选)检索资料 + 该会话历史 + 本次输入 -> 模型作答 -> 写回记忆。
-        stream=True 时逐字打印(流式),返回拼好的完整答案。
+        开启工具时走工具调用循环;否则按 stream 流式/非流式直接作答。
         """
+        if self.use_tools:
+            return self._chat_with_tools(session_id, user_input)
+
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         messages.extend(self.memory.history(session_id))
 
@@ -123,11 +128,56 @@ class AiCodingHelper:
         print()  # 换行收尾
         return "".join(chunks)
 
+    def _chat_with_tools(self, session_id: str, user_input: str) -> str:
+        """
+        工具调用循环(ReAct 核心,对标教程的 Tools):
+        模型自主决定是否调工具 -> 工具先过权限审计再执行 -> 结果回填 -> 直到最终答案。
+        """
+        from tools import TOOL_SCHEMAS, dispatch  # 延迟导入:不开 tools 就不加载
+
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        messages.extend(self.memory.history(session_id))
+        messages.append({"role": "user", "content": user_input})
+
+        answer = "(已达到最大步数,未得到最终答案)"
+        for step in range(1, MAX_TOOL_STEPS + 1):
+            resp = self.client.chat.completions.create(
+                model=CHAT_MODEL, messages=messages,
+                tools=TOOL_SCHEMAS, tool_choice="auto", temperature=0.3,
+            )
+            msg = resp.choices[0].message
+
+            if not msg.tool_calls:          # 没有要调工具 -> 最终答案
+                answer = msg.content
+                print(answer)
+                break
+
+            messages.append(msg)            # 把"要调工具"的消息加入历史
+            for tc in msg.tool_calls:
+                name = tc.function.name
+                raw_args = tc.function.arguments
+                print(f"  [第{step}步] 模型请求调用工具:{name}({raw_args})")
+                result = dispatch(name, raw_args)   # 工具内部已过权限审计
+                print(f"  -> {result}")
+                messages.append({
+                    "role": "tool", "tool_call_id": tc.id, "content": result,
+                })
+
+        # 写回记忆:只存原始问答(不污染上下文)
+        self.memory.add(session_id, "user", user_input)
+        self.memory.add(session_id, "assistant", answer)
+        return answer
+
 
 def interactive(helper: AiCodingHelper) -> None:
     """交互式对话循环。输入 exit/quit 退出,输入 /clear 清空当前会话记忆。"""
     session_id = "cli-default"
-    mode = "RAG" if helper.retriever is not None else "纯对话"
+    parts = []
+    if helper.retriever is not None:
+        parts.append("RAG")
+    if helper.use_tools:
+        parts.append("工具")
+    mode = "+".join(parts) if parts else "纯对话"
     print(f"码小安 已就绪(模式:{mode})。输入问题开始对话;exit 退出,/clear 清空记忆。")
     print("-" * 60)
     while True:
@@ -145,7 +195,10 @@ def interactive(helper: AiCodingHelper) -> None:
             helper.memory.clear(session_id)
             print("(已清空当前会话记忆)")
             continue
-        print("码小安: ", end="", flush=True)
+        if helper.use_tools:
+            print("码小安:")
+        else:
+            print("码小安: ", end="", flush=True)
         helper.chat(session_id, user_input, stream=True)
         print("-" * 60)
 
@@ -153,21 +206,25 @@ def interactive(helper: AiCodingHelper) -> None:
 def main():
     load_dotenv()  # 从当前目录的 .env 读取 DEEPSEEK_API_KEY
 
-    # 解析 --rag 开关(出现即开启 RAG),其余参数拼成单轮问题
+    # 解析开关:--rag 开启检索,--tools 开启工具调用;其余参数拼成单轮问题
     args = sys.argv[1:]
     use_rag = "--rag" in args
-    args = [a for a in args if a != "--rag"]
+    use_tools = "--tools" in args
+    args = [a for a in args if a not in ("--rag", "--tools")]
 
     retriever = None
     if use_rag:
         from retriever import Retriever  # 延迟导入:不开 RAG 就不加载 fastembed
         retriever = Retriever()
-    helper = AiCodingHelper(retriever=retriever)
+    helper = AiCodingHelper(retriever=retriever, use_tools=use_tools)
 
     if args:
         question = " ".join(args)
         print(f"你: {question}")
-        print("码小安: ", end="", flush=True)
+        if use_tools:
+            print("码小安:")
+        else:
+            print("码小安: ", end="", flush=True)
         helper.chat("cli-oneshot", question, stream=True)
     else:
         interactive(helper)
