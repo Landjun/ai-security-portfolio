@@ -115,22 +115,7 @@ class AiCodingHelper:
         if self.use_tools:
             return self._chat_with_tools(session_id, user_input)
 
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-        messages.extend(self.memory.history(session_id))
-
-        # RAG:检索知识库,把相关资料作为本轮的额外上下文(检索/生成解耦)
-        if self.retriever is not None:
-            context = self.retriever.build_context(user_input)
-            if context:
-                turn = (
-                    "请优先依据下面的【知识库资料】回答;资料不足时再用你自己的知识补充,"
-                    f"不要编造。\n知识库资料:\n{context}\n\n我的问题:{user_input}"
-                )
-            else:
-                turn = user_input
-            messages.append({"role": "user", "content": turn})
-        else:
-            messages.append({"role": "user", "content": user_input})
+        messages = self._build_messages(session_id, user_input)
 
         # 开启输出护栏时改用非流式:拿到完整输出后做 DLP 脱敏再打印
         if self.guardrails:
@@ -151,6 +136,60 @@ class AiCodingHelper:
         self.memory.add(session_id, "user", user_input)
         self.memory.add(session_id, "assistant", answer)
         return answer
+
+    def _build_messages(self, session_id: str, user_input: str) -> list:
+        """拼装本轮 messages:系统提示 + 会话历史 +(可选 RAG 检索资料 +)本次输入。"""
+        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        messages.extend(self.memory.history(session_id))
+
+        # RAG:检索知识库,把相关资料作为本轮的额外上下文(检索/生成解耦)
+        if self.retriever is not None:
+            context = self.retriever.build_context(user_input)
+            if context:
+                turn = (
+                    "请优先依据下面的【知识库资料】回答;资料不足时再用你自己的知识补充,"
+                    f"不要编造。\n知识库资料:\n{context}\n\n我的问题:{user_input}"
+                )
+            else:
+                turn = user_input
+            messages.append({"role": "user", "content": turn})
+        else:
+            messages.append({"role": "user", "content": user_input})
+        return messages
+
+    def stream_reply(self, session_id: str, user_input: str):
+        """
+        Web 用的流式生成器:逐段 yield 文本增量(给 SSE 接口推送)。
+        先过输入护栏;若开启输出护栏则改为整段脱敏后一次性 yield。
+        """
+        blocked = self._guard_input(user_input)
+        if blocked is not None:
+            yield blocked
+            return
+
+        messages = self._build_messages(session_id, user_input)
+
+        if self.guardrails:
+            # 输出护栏需要完整文本才能脱敏,故非流式取全量再 yield
+            resp = self.client.chat.completions.create(
+                model=CHAT_MODEL, messages=messages, temperature=0.3
+            )
+            answer = self._guard_output(resp.choices[0].message.content)
+            yield answer
+        else:
+            chunks = []
+            resp = self.client.chat.completions.create(
+                model=CHAT_MODEL, messages=messages, temperature=0.3, stream=True
+            )
+            for piece in resp:
+                delta = piece.choices[0].delta.content
+                if delta:
+                    chunks.append(delta)
+                    yield delta
+            answer = "".join(chunks)
+
+        self.memory.add(session_id, "user", user_input)
+        self.memory.add(session_id, "assistant", answer)
 
     def _chat_stream(self, messages: list) -> str:
         """流式调用:逐 chunk 打印并拼接出完整答案。"""
