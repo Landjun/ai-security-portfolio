@@ -1,124 +1,190 @@
-# AI 安全作品集 (AI Security Portfolio)
+<div align="center">
+
+# 🛡️ AI 安全作品集 · AI Security Portfolio
+
+**从传统安全到 AI 安全的全栈转型作品集 —— 会造 AI · 会防应用 · 会攻防模型本身**
 
 [![CI](https://github.com/Landjun/ai-security-portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/Landjun/ai-security-portfolio/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![Projects](https://img.shields.io/badge/可运行子项目-45+-success)
+![OWASP](https://img.shields.io/badge/OWASP_LLM_Top_10-全覆盖-FF6B00)
+![ATLAS](https://img.shields.io/badge/MITRE_ATLAS-对齐-blue)
+![Stack](https://img.shields.io/badge/DeepSeek·LangChain·FastAPI·fastembed-informational)
+![Scope](https://img.shields.io/badge/用途-学习与防御研究-lightgrey)
 
-> 一个从传统安全到 AI 安全的转型作品集：把每一次学习都沉淀成**代码、文档、可复现环境与面试表达**。
+<em>把每一次学习都沉淀成 <strong>可运行代码 · 量化结果 · 可复现环境 · 面试表达</strong>。</em>
 
-## ⭐ 亮点速览
+</div>
 
-- **AI 内生安全六大攻击面**全复现 + 防御(对抗/投毒/后门/成员推断/模型窃取/红队)+ 手写 DP-SGD
-- **真实 DeepSeek 上**验证提示注入 / 越狱 / RAG 注入 / Agent 越权攻防;正则检测器→ML 语义检测把红队绕过率 **53%→0%**
-- **LLM 安全网关**:输入护栏+动作审计+输出扫描统一中间件 + HTTP API
-- **Python 答疑客服**(旗舰):86 篇知识库 + 四道护栏(防幻觉/防注入/合规/溯源),评测正确率 95%
-- 约 21 个可运行项目 · 纯 Python · 模型层实验零 GPU
+---
+
+## 📊 一眼看懂(量化战绩 · 面试可直接报数)
+
+| 维度 | 战绩 | 项目 |
+|---|---|---|
+| 🔴 红队 → 根治 | 注入检测绕过率 **53% → 0%**(零误报) | [ML 语义注入检测器](03-agent-rag-security/ml-injection-detector/) |
+| 🕵️ 隐私攻击 | 成员推断 **AUC 0.93 → 0.56**(正则化抑制) | [成员推断](07-ai-intrinsic-security/membership-inference/) |
+| 🪞 模型窃取 | 黑盒查询蒸馏 **保真度 95%** | [模型窃取](07-ai-intrinsic-security/model-extraction/) |
+| 🎭 隐蔽后门 | 干净准确率 **100%** 仍可被触发器激活 → 自动揪出 | [后门攻击](07-ai-intrinsic-security/backdoor-attack/) |
+| ☠️ 数据投毒 | 准确率 **100% → 62% → 100%**(检测清洗恢复) | [数据投毒](07-ai-intrinsic-security/data-poisoning/) |
+| 🛡️ 工程化收口 | 注入/越狱/审计/输出统一中间件 + HTTP API | [LLM 安全网关](03-agent-rag-security/llm-security-gateway/) |
+| 🤖 全栈 AI 应用 | 对话/记忆/RAG/工具/护栏/Web/可观测性一体 | [AI 编程助手「码小安」](06-ai-development/ai-coding-helper/) |
+| ✅ 质量保障 | **34 个安全单元测试 + GitHub Actions CI** 常绿 | [tests/](tests/) |
+
+> **45+ 可运行子项目 · 纯 Python · 模型层实验零 GPU · 应用层 demo 多数零依赖零 Key。**
+
+---
+
+## 🧱 能力三层地图
+
+```mermaid
+flowchart TB
+    subgraph L3["🧬 第三层 · AI 内生安全(模型本身的攻防)★核心差异化"]
+        A1[对抗样本] ~~~ A2[数据投毒] ~~~ A3[后门木马] ~~~ A4[成员推断] ~~~ A5[模型窃取] ~~~ A6[自动化红队] ~~~ A7[DP-SGD 差分隐私]
+    end
+    subgraph L2["🔐 第二层 · AI 应用 / Agent 安全(提示与工具层)"]
+        B1[提示注入] ~~~ B2[越狱] ~~~ B3[RAG 注入检测] ~~~ B4[Agent 权限审计] ~~~ B5[纵深防御管线] ~~~ B6[真实 DeepSeek 验证]
+    end
+    subgraph L1["⚙️ 第一层 · AI 开发(会造才会防)"]
+        C1[真实 RAG] ~~~ C2[function-calling Agent] ~~~ C3[LangChain Agent] ~~~ C4[全栈 AI 编程助手] ~~~ C5[LoRA 微调]
+    end
+    L1 --> L2 --> L3
+```
+
+> 一句话:**会开发 AI · 会防应用层 · 会攻防模型本身**——三层都有可运行代码与量化结果。
+> 📌 [项目地图 + STAR 故事集](05-resume-interview/project-map.md) · [JD 能力对照](05-resume-interview/jd-capability-map.md) · [成长路线 ROADMAP](ROADMAP.md)
+
+---
+
+## ⭐ 旗舰项目聚焦
+
+### 1️⃣ AI 编程助手「码小安」—— 全栈 AI 应用 × 安全一体化 · [代码](06-ai-development/ai-coding-helper/)
+
+> 对标 LangChain4j 实战教程,用 Python 复刻并扩展。一个项目打通「AI 应用开发」与「AI 安全」。
+
+```mermaid
+flowchart LR
+    U([用户]) --> G1["🛡️ 输入护栏<br/>提示注入检测"]
+    G1 --> MEM["🧠 多会话记忆<br/>session 隔离"]
+    MEM --> RAG["📚 RAG 检索<br/>fastembed 本地向量化"]
+    RAG --> LLM["🤖 DeepSeek"]
+    LLM --> TOOL["🔧 工具调用<br/>+ 权限审计关卡"]
+    TOOL --> G2["🛡️ 输出护栏<br/>DLP 脱敏"]
+    G2 --> OUT(["💬 SSE 流式 → 前端"])
+    OUT -.记录.-> OBS[("📈 可观测性<br/>延迟 / token / 成本")]
+```
+
+### 2️⃣ LLM 安全网关 —— 把所有检测器收口成可插拔中间件 · [代码](03-agent-rag-security/llm-security-gateway/)
+
+```mermaid
+flowchart LR
+    REQ([请求]) --> IN["输入护栏<br/>注入+越狱检测"]
+    IN --> ACT["动作审计<br/>工具最小权限"]
+    ACT --> OUTS["输出扫描<br/>机密/系统提示词泄露"]
+    OUTS --> RESP([放行/拦截 + 审计日志])
+    IN -.可插拔.-> ML[ML 语义检测器]
+```
+
+### 3️⃣ Python 答疑客服(旗舰落地)· [代码](04-ops-ai-efficiency/python-ta-rag/)
+
+> 可替代助教的 RAG 智能客服:86 篇知识库 + **四道护栏**(防幻觉 / 防注入 / 合规 / 引用溯源),20 条标注集评测正确率 **95%**。命令行 + 网页双界面。
+
+---
+
+## 📂 模块导航
+
+| 模块 | 方向 | 规模 |
+|------|------|------|
+| [01 传统安全](01-traditional-security/) | Web/系统漏洞:原理→复现→防护→检测 | ✅ 8 靶场 + 31 单测 |
+| [02 AI 安全](02-ai-security/) | 提示注入/越狱 + OWASP LLM Top 10 全覆盖 | ✅ 9 个案例 |
+| [03 Agent / RAG 安全](03-agent-rag-security/) | RAG/Agent 攻防工具、安全网关、评测体系、代码审计 | ✅ 11 个工具 |
+| [04 运营 AI 提效](04-ops-ai-efficiency/) | 真实业务的 AI 自动化(含答疑客服旗舰) | ✅ 3 个案例 |
+| [05 简历与面试](05-resume-interview/) | 简历话术、JD 对照、STAR 故事、投递模板 | ✅ 持续更新 |
+| [06 AI 开发](06-ai-development/) | 真实 RAG / Agent / LangChain / 微调 / 全栈助手 | ✅ 6 个项目 |
+| [07 AI 内生安全](07-ai-intrinsic-security/) | 对抗/投毒/后门/成员推断/模型窃取/红队/DP-SGD | ✅ 7 个实验 |
+| [08 区块链安全](08-blockchain-security/) | 智能合约重入漏洞静态审计骨架 | 🚧 骨架 |
+
+---
 
 ## 🚀 快速开始
 
 ```bash
 git clone https://github.com/Landjun/ai-security-portfolio
 cd ai-security-portfolio
-# 应用层安全 demo(无需任何依赖/Key)
+
+# 应用层安全 demo(无需任何依赖 / Key)
 python 02-ai-security/prompt-injection/demo.py
+
 # AI 内生安全(需 scikit-learn)
 python 07-ai-intrinsic-security/backdoor-attack/demo.py
-# 安全模块单元测试(13 个用例,纯规则,秒级)
+
+# 安全模块单元测试(纯规则,秒级)
 python -m unittest discover -s tests -v
 ```
 
-## 🎯 目标
+---
 
-半年到一年内转型 **AI 安全 / AI Agent 工程师**，长期深耕传统安全、AI 安全、区块链安全。
-所有产出遵循一条原则：**学到的东西，必须变成可展示的成果。**
+## ✅ 可运行案例全景
 
-## 🧱 能力三层总览(会造 · 会防应用 · 会攻防模型)
-
-```
-第三层 · AI 内生安全   对抗样本 / 数据投毒 / 后门 / 成员推断 / 模型窃取 / 自动化红队
-第二层 · AI 应用安全   提示注入 / 越狱 / RAG 注入检测 / Agent 权限审计 / 纵深防御 / 真实LLM验证
-第一层 · AI 开发       真实 RAG(embedding+检索+生成) / 真实 Agent(function calling)
-```
-
-> 全部纯 Python、可本地复现;模型层实验零 GPU(scikit-learn)。
-> 📌 [项目地图 + STAR 故事集](05-resume-interview/project-map.md) · [成长路线 ROADMAP](ROADMAP.md)
-
-## 📂 模块导航
-
-| 模块 | 方向 | 状态 |
-|------|------|------|
-| [01 传统安全](01-traditional-security/) | Web/系统漏洞原理、复现、防护、检测 | ✅ 8 个案例 |
-| [02 AI 安全](02-ai-security/) | 提示注入、越狱、模型滥用等案例研究 | ✅ 2 个案例 |
-| [03 Agent / RAG 安全](03-agent-rag-security/) | AI Agent / RAG 系统的安全工具与防护 | ✅ 7 个工具 |
-| [04 运营 AI 提效](04-ops-ai-efficiency/) | 教学运营场景的 AI 自动化案例 | ✅ 2 个案例 |
-| [05 简历与面试](05-resume-interview/) | 简历项目描述、面试表达、作品集话术 | ✅ 进行中 |
-| [06 AI 开发](06-ai-development/) | 真实 LLM 应用 / RAG / Agent / 微调 | ✅ 3 个项目 |
-| [07 AI 内生安全](07-ai-intrinsic-security/) | 对抗样本 / 投毒 / 后门 / 隐私 / 模型窃取 | ✅ 7 个实验 |
-
-> 📌 完整成长路线见 **[ROADMAP.md](ROADMAP.md)**（求职导向 · 分阶段 · 持续打勾）。
-
-## ✅ 已完成案例（可运行）
+<details>
+<summary><strong>点开查看全部 25+ 可运行案例(按方向分组)</strong></summary>
 
 | 案例 | 方向 | 看点 |
 |------|------|------|
-| [提示注入 Prompt Injection](02-ai-security/prompt-injection/) | AI 安全 | 模型被"忽略指令"劫持泄露系统提示词 → 输入护栏拦截 |
-| [越狱 Jailbreak](02-ai-security/jailbreak/) | AI 安全 | 角色扮演/DAN 绕过安全护栏 → 越狱检测+拒答加固 |
-| [RAG 注入检测器](03-agent-rag-security/rag-injection-detector/) | Agent/RAG 安全 | 知识库投毒劫持模型 → 可扫描文件的注入检测工具 |
-| [Agent 工具调用权限审计](03-agent-rag-security/tool-permission-audit/) | Agent/RAG 安全 | 被劫持 Agent 越权转账/删库 → 最小权限审计拦截(LLM06) |
-| [端到端安全 Agent 管线](03-agent-rag-security/secure-agent-pipeline/) | Agent/RAG 安全 | 复用上两个工具 → 纵深防御:任一层失守另一层兜底(LLM01+06) |
-| [真实 RAG 系统](06-ai-development/real-rag-system/) | AI 开发 | 本地 embedding 语义检索 + DeepSeek 生成,真实可用的 RAG |
-| [真实 LLM 注入攻防验证](03-agent-rag-security/real-rag-injection/) | AI 开发 × 安全 | 真实 DeepSeek 被投毒文档劫持 → 检测器源头剔除(含 v1 被绕过→v2 加固) |
-| [真实 Agent](06-ai-development/real-agent/) | AI 开发 | DeepSeek function calling 自主调用工具,完整 ReAct 循环 |
-| [文本对抗样本](07-ai-intrinsic-security/text-adversarial/) | AI 内生安全 | 形近字+拆字让分类器判错 → 对抗训练加固模型本身(ATLAS) |
-| [数据投毒](07-ai-intrinsic-security/data-poisoning/) | AI 内生安全 | 6 条毒样本让准确率 100%→62% → kNN 检测清洗恢复(LLM03) |
-| [后门/木马攻击](07-ai-intrinsic-security/backdoor-attack/) | AI 内生安全 | 秘密触发器隐蔽埋后门(干净100%)→ 翻转测试自动揪出(ATLAS) |
-| [成员推断攻击](07-ai-intrinsic-security/membership-inference/) | AI 内生安全·隐私 | 靠自信度判断样本是否被训练过 AUC 0.93 → 正则化降到 0.56 |
-| [差分隐私训练 DP-SGD](07-ai-intrinsic-security/dp-sgd/) | AI 内生安全·隐私 | 手写DP-SGD裁剪+加噪,成员推断 AUC 0.58→0.51,量化隐私-效用权衡 |
-| [模型窃取](07-ai-intrinsic-security/model-extraction/) | AI 内生安全 | 黑盒查询蒸馏复制模型(保真度 95%)→ 限流/输出扰动防御 |
-| [自动化红队](07-ai-intrinsic-security/auto-redteam/) | AI 内生安全 | 批量变体轰炸自有检测器,量化绕过率 31% 定位致命弱点(ATLAS) |
-| [ML 语义注入检测器](03-agent-rag-security/ml-injection-detector/) | AI 开发 × 安全 | 语义 embedding+LR 把红队绕过率 53%→0%、零误报(Roadmap 3.1 闭环) |
-| [真实 Agent 越权攻防](03-agent-rag-security/real-agent-audit/) | AI 开发 × 安全 | 真实 DeepSeek Agent 被劫持越权退款 → 审计器执行前拦截(LLM06) |
-| [LLM 安全网关](03-agent-rag-security/llm-security-gateway/) | 工程化收口 | 输入/动作/输出三关卡封装成统一中间件 + HTTP API(Roadmap 3.2) |
-| [AI 系统安全评测体系](03-agent-rag-security/ai-security-assessment/) | 评测体系 | 资产→威胁→13条用例库→评级→报告,把攻防收口成可交付评测流程 |
-| [AI Agent 代码审计](03-agent-rag-security/agent-code-audit/) | 代码审计 | 故意有漏洞的Agent(7类漏洞)+ 扫描器 + 审计报告 + 修复闭环(8→0) |
-| [多智能体安全](03-agent-rag-security/multi-agent-security/) | 前沿·Agent安全 | 跨智能体提示注入传播(混淆代理)→ 智能体间净化+最小权限纵深防御 |
-| [MCP 安全](03-agent-rag-security/mcp-security/) | 前沿·协议安全 | 工具描述投毒/不可信服务器/rug-pull 检测 + 指纹 pin |
-| [LangChain Agent](06-ai-development/langchain-agent/) | AI 开发 | LangChain+DeepSeek 工具调用 Agent,工具执行前接权限审计 |
-| [AI 赋能安全自动化](06-ai-development/ai-assisted-security/) | AI 开发 × 安全 | AI 辅助漏洞情报分析 + AI 辅助代码审计(静态+语义混合) |
-| [LoRA 微调(numpy手写)](06-ai-development/lora-finetune/) | AI 开发 | 手写低秩适配,6% 参数逼近全量微调,演示 LoRA 机制 |
-| [传统安全靶场 ×8](01-traditional-security/) | 传统安全 | SQLi/XSS/命令注入/路径穿越/SSRF/文件上传/反序列化/SSTI |
+| [提示注入](02-ai-security/prompt-injection/) | AI 安全 | "忽略指令"劫持泄露系统提示词 → 输入护栏拦截 |
+| [越狱 Jailbreak](02-ai-security/jailbreak/) | AI 安全 | 角色扮演/DAN 绕过 → 越狱检测+拒答加固 |
+| [RAG 注入检测器](03-agent-rag-security/rag-injection-detector/) | Agent/RAG | 知识库投毒劫持模型 → 可扫描文件的注入检测 |
+| [Agent 工具权限审计](03-agent-rag-security/tool-permission-audit/) | Agent/RAG | 越权转账/删库 → 最小权限审计拦截(LLM06) |
+| [端到端安全 Agent 管线](03-agent-rag-security/secure-agent-pipeline/) | Agent/RAG | 纵深防御:任一层失守另一层兜底(LLM01+06) |
+| [真实 RAG 系统](06-ai-development/real-rag-system/) | AI 开发 | 本地 embedding 检索 + DeepSeek 生成 |
+| [真实 LLM 注入攻防验证](03-agent-rag-security/real-rag-injection/) | 开发×安全 | 真实 DeepSeek 被劫持 → 检测器源头剔除(v1被绕过→v2加固) |
+| [真实 Agent](06-ai-development/real-agent/) | AI 开发 | DeepSeek function calling 完整 ReAct 循环 |
+| [文本对抗样本](07-ai-intrinsic-security/text-adversarial/) | 内生安全 | 形近字+拆字让分类器判错 → 对抗训练加固 |
+| [数据投毒](07-ai-intrinsic-security/data-poisoning/) | 内生安全 | 6 条毒样本 100%→62% → kNN 检测恢复(LLM03) |
+| [后门/木马攻击](07-ai-intrinsic-security/backdoor-attack/) | 内生安全 | 秘密触发器隐蔽埋后门 → 翻转测试自动揪出 |
+| [成员推断攻击](07-ai-intrinsic-security/membership-inference/) | 内生安全·隐私 | 自信度判断是否被训练 AUC 0.93 → 0.56 |
+| [差分隐私训练 DP-SGD](07-ai-intrinsic-security/dp-sgd/) | 内生安全·隐私 | 手写裁剪+加噪,量化隐私-效用权衡 |
+| [模型窃取](07-ai-intrinsic-security/model-extraction/) | 内生安全 | 黑盒蒸馏保真度 95% → 限流/扰动防御 |
+| [自动化红队](07-ai-intrinsic-security/auto-redteam/) | 内生安全 | 批量变体轰炸,量化绕过率 31% 定位弱点 |
+| [ML 语义注入检测器](03-agent-rag-security/ml-injection-detector/) | 开发×安全 | embedding+LR 把绕过率 53%→0%、零误报 |
+| [真实 Agent 越权攻防](03-agent-rag-security/real-agent-audit/) | 开发×安全 | 真实 Agent 被劫持越权退款 → 执行前拦截 |
+| [LLM 安全网关](03-agent-rag-security/llm-security-gateway/) | 工程化 | 输入/动作/输出三关卡统一中间件 + HTTP API |
+| [AI 系统安全评测体系](03-agent-rag-security/ai-security-assessment/) | 评测体系 | 资产→威胁→用例库→评级→报告 |
+| [AI Agent 代码审计](03-agent-rag-security/agent-code-audit/) | 代码审计 | 7 类漏洞 + 扫描器 + 报告 + 修复闭环(8→0) |
+| [多智能体安全](03-agent-rag-security/multi-agent-security/) | 前沿 | 跨智能体注入传播 → 净化+最小权限纵深防御 |
+| [MCP 安全](03-agent-rag-security/mcp-security/) | 前沿·协议 | 工具描述投毒/rug-pull 检测 + 指纹 pin |
+| [AI 编程助手「码小安」](06-ai-development/ai-coding-helper/) | 全栈开发×安全 | 对话/记忆/RAG/工具+审计/护栏/SSE Web/可观测性 |
+| [LangChain Agent](06-ai-development/langchain-agent/) | AI 开发 | LangChain+DeepSeek 工具调用 + 权限审计 |
+| [AI 赋能安全自动化](06-ai-development/ai-assisted-security/) | 开发×安全 | AI 辅助漏洞情报 + AI 辅助代码审计 |
+| [LoRA 微调(numpy手写)](06-ai-development/lora-finetune/) | AI 开发 | 手写低秩适配,6% 参数逼近全量微调 |
+| [Python 答疑客服](04-ops-ai-efficiency/python-ta-rag/) | 业务落地 | 86 篇知识库 + 四道护栏,评测正确率 95% |
+| [传统安全靶场 ×8](01-traditional-security/) | 传统安全 | SQLi/XSS/命令注入/路径穿越/SSRF/上传/反序列化/SSTI |
 
-> 全部纯 Python、零依赖、无需 API Key，本地一条命令即可复现攻击与防御。
+</details>
+
+> 全部纯 Python、本地一条命令即可复现攻击与防御;多数应用层 demo 零依赖、无需 API Key。
+
+---
 
 ## ✍️ 文章与表达输出
 
-- [当 AI Agent 被劫持：用纵深防御守住"会动手的模型"](articles/agent-security-defense-in-depth.md) — 技术博客文章（📤 待发布，见[发布指南](articles/PUBLISH-GUIDE.md)）
-- [纯 Python 复现 AI 内生安全的六大攻击面](articles/ai-intrinsic-security-six-attacks.md) — 内生安全长文（📤 待发布）
-- [我做了一个"会拒绝学员"的 Python 答疑 AI](articles/python-ta-rag-build.md) — RAG 产品向，最易传播（📤 待发布）
-- [从"手动发现"到"自动根治"：一次完整的 LLM 注入攻防闭环](articles/real-llm-injection-closed-loop.md) — 方法论深度文（📤 待发布）
-- [AI 安全评测：从"会单点攻击"到"能体系化交付"](articles/ai-security-assessment-system.md) — 评测体系深度文（📤 待发布）
-- [零基础的我，如何用一个多月搭出一个 AI 安全作品集](articles/from-zero-to-ai-security-portfolio.md) — 转型故事，私域/涨粉向（📤 待发布）
-- [项目地图 + STAR 面试故事集](05-resume-interview/project-map.md) — 三层能力总览与面试故事
-- [投递话术与自我介绍模板](05-resume-interview/hr-outreach.md) — 打招呼/求职信/投递清单
-- [岗位 JD 能力缺口分析](05-resume-interview/jd-gap-analysis.md) — 对照 AI 安全攻防岗的强项/缺口/补齐路线
-- [JD 能力 ↔ 作品集 对照总表](05-resume-interview/jd-capability-map.md) — 逐条能力对应到具体产物(穷尽覆盖)
-- [AI 攻防 / CTF 比赛准备](05-resume-interview/ctf-prep.md) · [红蓝队方法论](01-traditional-security/methodology-redteam.md) · [前沿复现笔记](research-notes/)
-- [可直接粘贴的简历项目经历](05-resume-interview/resume-project-section.md) — 精简/标准/完整三档
-- [PPT 大纲 + 5 分钟面试口播稿](05-resume-interview/talk-deck-outline.md) — 面试/分享用
-- [简历项目话术](05-resume-interview/resume-bullets.md) — 5 条可直接写进简历的要点
+- [当 AI Agent 被劫持:用纵深防御守住"会动手的模型"](articles/agent-security-defense-in-depth.md)
+- [纯 Python 复现 AI 内生安全的六大攻击面](articles/ai-intrinsic-security-six-attacks.md)
+- [我做了一个"会拒绝学员"的 Python 答疑 AI](articles/python-ta-rag-build.md)
+- [从"手动发现"到"自动根治":一次完整的 LLM 注入攻防闭环](articles/real-llm-injection-closed-loop.md)
+- [AI 安全评测:从"会单点攻击"到"能体系化交付"](articles/ai-security-assessment-system.md)
+- 📂 求职配套:[投递话术](05-resume-interview/hr-outreach.md) · [JD 缺口分析](05-resume-interview/jd-gap-analysis.md) · [简历项目段](05-resume-interview/resume-project-section.md) · [面试口播稿](05-resume-interview/talk-deck-outline.md)
 
-## 🧭 每个模块的统一结构
+---
 
-每个案例/工具尽量包含：
-1. **原理** —— 这是什么，为什么会出问题
-2. **复现环境** —— 本地靶场 / 授权环境，可一键跑起来
-3. **防护方案** —— 怎么防
-4. **修复建议** —— 怎么改
-5. **检测清单** —— 怎么发现
-6. **面试表达** —— 一句话讲清楚
+## 🧭 每个案例的统一结构
+
+> **原理 → 复现环境 → 防护方案 → 修复建议 → 检测清单 → 面试表达**(六步法,作品集 → 简历的转换器)
 
 ## ⚠️ 安全边界
 
-本仓库所有内容**仅用于本地靶场、授权环境、学习与防御研究**，不包含针对真实第三方目标的攻击脚本。
+本仓库所有内容**仅用于本地靶场、授权环境、学习与防御研究**,不包含针对真实第三方目标的攻击脚本。
 
-## 🛠️ 工作方式
-
-MVP 优先 · 每一步都可运行可验证 · 每个产出对应一句简历话术。
+<div align="center">
+<sub>MVP 优先 · 每一步可运行可验证 · 每个产出对应一句简历话术</sub>
+</div>
