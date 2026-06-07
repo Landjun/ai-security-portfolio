@@ -1,0 +1,14 @@
+# 码小安 Web 服务一键起(对标 B3:容器化部署)
+# 用法:
+#   1) 复制 .env.example 为 .env 并填入 DEEPSEEK_API_KEY
+#   2) docker compose up --build
+#   3) 浏览器打开 http://127.0.0.1:8000
+services:
+  coding-helper:
+    build: .
+    image: coding-helper
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env          # 注入 DEEPSEEK_API_KEY,不打进镜像
+    restart: unless-stopped

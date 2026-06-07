@@ -1,0 +1,9 @@
+# 不要打进镜像的东西
+.env
+__pycache__/
+*.pyc
+chroma_db/
+logs/
+notes.md
+docs/
+*.md

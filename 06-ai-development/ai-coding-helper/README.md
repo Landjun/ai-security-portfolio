@@ -4,6 +4,9 @@
 > 教程原版是 Java/Spring Boot,本机无 JDK/Maven 且整个作品集是 Python,故用 Python 复刻——
 > 关注点一致:**ChatModel → 系统提示 → 多会话记忆 → 流式输出 → RAG → 工具 → 护栏 → Web 服务化 → 可观测性**(已全部落地)。
 
+<!-- 录制演示后取消下一行注释即可展示(指南见 docs/RECORD-DEMO.md): -->
+<!-- ![码小安 Web 演示](docs/demo.gif) -->
+
 ## 文件结构
 
 ```
@@ -19,6 +22,8 @@ ai-coding-helper/
 ├── static/index.html    # 极简前端聊天页
 ├── observability.py     # 日志与可观测性(结构化日志 + 延迟/token/成本指标 + 聚合)
 ├── logs/                # 运行时落的 JSON 日志(已 gitignore)
+├── Dockerfile / docker-compose.yml / .dockerignore  # 容器化部署(B3)
+├── docs/RECORD-DEMO.md  # 演示 gif 录制指南
 ├── requirements.txt / .env.example / README.md
 ```
 
@@ -73,6 +78,19 @@ cd 06-ai-development\ai-coding-helper
 uvicorn web_app:app --reload --port 8000
 # 浏览器打开 http://127.0.0.1:8000
 ```
+
+**Docker 一键部署(对标 B3)**：
+
+```bash
+cd 06-ai-development/ai-coding-helper
+cp .env.example .env          # 填入 DEEPSEEK_API_KEY
+docker compose up --build     # 或: docker build -t coding-helper . && docker run -p 8000:8000 --env-file .env coding-helper
+# 浏览器打开 http://127.0.0.1:8000
+```
+
+> 注:容器只含本目录,默认跑纯对话 Web(`--safe` 护栏依赖仓库 02 模块,容器内不启用)。
+> 镜像含 ML 依赖(fastembed/chromadb)体积较大;只需 Web 对话可自行精简 requirements。
+> 🎬 想给招聘方放一张「流式问答」演示 gif?照 [docs/RECORD-DEMO.md](docs/RECORD-DEMO.md) 录制即可。
 
 **离线自测**（不消耗 key）：
 
