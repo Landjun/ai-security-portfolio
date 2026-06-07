@@ -102,7 +102,7 @@ flowchart LR
 | [05 简历与面试](05-resume-interview/) | 简历话术、JD 对照、STAR 故事、投递模板 | ✅ 持续更新 |
 | [06 AI 开发](06-ai-development/) | 真实 RAG / Agent / LangChain / 微调 / 全栈助手 | ✅ 6 个项目 |
 | [07 AI 内生安全](07-ai-intrinsic-security/) | 对抗/投毒/后门/成员推断/模型窃取/红队/DP-SGD | ✅ 7 个实验 |
-| [08 区块链安全](08-blockchain-security/) | 智能合约重入漏洞静态审计骨架 | 🚧 骨架 |
+| [08 区块链安全](08-blockchain-security/) | 9 类智能合约漏洞对照 + Python 静态审计扫描器 + 审计报告 | ✅ 9 漏洞 + 扫描器 |
 
 ---
 
@@ -159,6 +159,7 @@ python -m unittest discover -s tests -v
 | [LoRA 微调(numpy手写)](06-ai-development/lora-finetune/) | AI 开发 | 手写低秩适配,6% 参数逼近全量微调 |
 | [Python 答疑客服](04-ops-ai-efficiency/python-ta-rag/) | 业务落地 | 86 篇知识库 + 四道护栏,评测正确率 95% |
 | [传统安全靶场 ×8](01-traditional-security/) | 传统安全 | SQLi/XSS/命令注入/路径穿越/SSRF/上传/反序列化/SSTI |
+| [智能合约审计 ×9](08-blockchain-security/) | 区块链安全 | 9 类漏洞对照 + Python 静态扫描器(8/8命中)+ 审计报告 |
 
 </details>
 
