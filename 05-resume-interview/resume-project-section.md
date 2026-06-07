@@ -12,7 +12,7 @@
 
 - **AI 内生安全攻防(核心)**:独立复现并防御模型层六大攻击面——对抗样本(对抗训练)、数据投毒(kNN 检测,准确率 100%→62%→100%)、后门木马(秘密触发器+翻转测试自动定位)、成员推断(AUC 0.93)、模型窃取(黑盒查询保真度 95%)、自动化红队(量化绕过率);并手写 DP-SGD 量化隐私-效用权衡。对应 OWASP ML/LLM Top 10、MITRE ATLAS。
 - **LLM/Agent 应用安全**:在真实 DeepSeek 上复现并防御提示注入、越狱、RAG 间接注入与 Agent 越权;将正则检测器升级为语义 ML 检测器,在 36 个红队变体上把绕过率从 53% 降到 0%、零误报;并把全部检测器封装成统一「LLM 安全网关」中间件 + HTTP API。
-- **AI 开发能力**:用本地 embedding + DeepSeek 搭建真实 RAG 问答系统与 function-calling Agent,打通向量化→检索→增强→生成与工具调用闭环——"会造才会防"。
+- **AI 开发能力(全栈)**:用本地 embedding + DeepSeek 搭建真实 RAG 问答系统与 function-calling Agent;并对标 LangChain4j 教程用 Python 复刻全栈 AI 编程助手「码小安」——对话 + 多会话记忆 + RAG + 工具调用 + SSE 流式 + FastAPI Web 化,且工具执行前过权限审计、接入输入/输出双向护栏,一个项目打通 AI 应用开发与 AI 安全——"会造才会防"。
 
 ---
 
@@ -33,7 +33,7 @@
 - **AI 内生安全**:复现并防御模型层六大攻击面 + DP-SGD 差分隐私训练,每个有量化结果(如成员推断 AUC 0.93→正则化 0.56;模型窃取保真度 95%;后门干净准确率 100% 仍可被触发器激活)。对应 OWASP ML/LLM Top 10、MITRE ATLAS。
 - **应用/Agent 安全**:真实 DeepSeek 上验证提示注入/越狱/RAG 注入/Agent 越权攻防;自动化红队量化检测器绕过率,并用语义 ML 检测把绕过率从 53% 降到 0%、零误报。
 - **工程化**:将所有检测器封装为统一「LLM 安全网关」(输入护栏 + 动作审计 + 输出扫描 + 审计日志),提供库与零依赖 HTTP API,安全能力可插拔接入。
-- **AI 开发 + 传统安全**:真实 RAG 与 function-calling Agent;并以本地靶场复现 SQL 注入/XSS/命令注入/路径穿越(OWASP A01/A03),支撑从传统安全到 AI 安全的转型叙事。
+- **AI 开发 + 传统安全**:真实 RAG 与 function-calling Agent;对标 LangChain4j 用 Python 复刻全栈 AI 编程助手「码小安」(对话/记忆/RAG/工具+权限审计/双向护栏/FastAPI SSE Web);并以本地靶场复现 SQL 注入/XSS/命令注入/路径穿越(OWASP A01/A03),支撑从传统安全到 AI 安全的转型叙事。
 
 ---
 
