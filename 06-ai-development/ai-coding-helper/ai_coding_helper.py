@@ -369,16 +369,21 @@ def interactive(helper: AiCodingHelper) -> None:
 def main():
     load_dotenv()  # 从当前目录的 .env 读取 DEEPSEEK_API_KEY
 
-    # 解析开关:--rag 检索,--tools 工具调用,--safe 护栏,--trace 控制台打印指标
+    # 解析开关:--rag 内存检索,--vectordb Chroma 持久化向量库,--tools 工具,--safe 护栏,--trace 指标
     args = sys.argv[1:]
     use_rag = "--rag" in args
+    use_vectordb = "--vectordb" in args
     use_tools = "--tools" in args
     guardrails = "--safe" in args
     trace = "--trace" in args
-    args = [a for a in args if a not in ("--rag", "--tools", "--safe", "--trace")]
+    args = [a for a in args
+            if a not in ("--rag", "--vectordb", "--tools", "--safe", "--trace")]
 
     retriever = None
-    if use_rag:
+    if use_vectordb:
+        from retriever_chroma import ChromaRetriever  # 真实向量库(持久化)
+        retriever = ChromaRetriever()
+    elif use_rag:
         from retriever import Retriever  # 延迟导入:不开 RAG 就不加载 fastembed
         retriever = Retriever()
     helper = AiCodingHelper(retriever=retriever, use_tools=use_tools,
