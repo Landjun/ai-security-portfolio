@@ -126,6 +126,34 @@ def _scan_reentrancy(path, lines):
     return findings
 
 
+def _scan_sig_replay(path, lines):
+    """文件级:用了 ecrecover 但全文件无 nonce -> 疑似签名重放(无防重放)。"""
+    text = "\n".join(l.split("//", 1)[0] for l in lines)
+    if "ecrecover" in text and "nonce" not in text:
+        for i, l in enumerate(lines, 1):
+            if "ecrecover" in l.split("//", 1)[0]:
+                return [(path, i, "SIG-REPLAY", "HIGH",
+                         "ecrecover 无 nonce/防重放 -> 加 nonce + 绑定合约地址/chainid(EIP-712)")]
+    return []
+
+
+def _scan_selfdestruct(path, lines):
+    """函数级:selfdestruct 所在函数无访问控制 -> 无保护自毁(SWC-106)。"""
+    findings = []
+    for _, header, body in _functions(lines):
+        guarded = "onlyOwner" in header or any(
+            "require(msg.sender" in txt.replace(" ", "") for _, txt in body)
+        sd_line = None
+        for ln, txt in body:
+            if "selfdestruct(" in txt.split("//", 1)[0]:
+                sd_line = ln
+                break
+        if sd_line and not guarded:
+            findings.append((path, sd_line, "SELFDESTRUCT", "HIGH",
+                             "无访问控制的 selfdestruct -> 加 onlyOwner,或改可暂停+有序撤回"))
+    return findings
+
+
 def scan_file(path):
     with open(path, encoding="utf-8") as f:
         lines = f.read().splitlines()
@@ -133,6 +161,8 @@ def scan_file(path):
     out += _scan_lines(path, lines)
     out += _scan_dos(path, lines)
     out += _scan_reentrancy(path, lines)
+    out += _scan_sig_replay(path, lines)
+    out += _scan_selfdestruct(path, lines)
     return out
 
 
@@ -176,6 +206,8 @@ def _self_test():
         "denial-of-service/Vulnerable.sol": "DOS-PUSH",
         "bad-randomness/Vulnerable.sol": "BAD-RANDOM",
         "delegatecall/Vulnerable.sol": "DELEGATECALL",
+        "signature-replay/Vulnerable.sol": "SIG-REPLAY",
+        "unprotected-selfdestruct/Vulnerable.sol": "SELFDESTRUCT",
     }
     ok = 0
     for rel, vid in expect.items():

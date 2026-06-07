@@ -3,7 +3,7 @@
 > 长期方向之一(传统安全 + AI 安全 + 区块链安全)。本模块沉淀智能合约**主流漏洞模式 + 审计方法论 + 静态扫描工具**。
 > **只做静态审计示例与清单,不编译、不部署、不执行、不做攻击模拟、不针对任何真实合约。**
 
-## 已建案例(9 类主流漏洞,每个含 `Vulnerable.sol` / `Fixed.sol` 对照 + README)
+## 已建案例(11 类主流漏洞,每个含 `Vulnerable.sol` / `Fixed.sol` 对照 + README)
 
 | # | 主题 | 漏洞类别(SWC) | 关键点 |
 |---|------|---------------|--------|
@@ -16,18 +16,27 @@
 | 7 | [随机数可预测](bad-randomness/) | SWC-120 | `block.timestamp` 当随机源;VRF/commit-reveal |
 | 8 | [委托调用风险](delegatecall/) | SWC-112 | 存储布局错配、目标可控的 `delegatecall` |
 | 9 | [前置交易 MEV](front-running/) | SWC-114 | mempool 抢跑;commit-reveal + 滑点保护 |
+| 10 | [签名重放](signature-replay/) | SWC-121 | `ecrecover` 无 nonce;EIP-712 + nonce |
+| 11 | [无保护 selfdestruct](unprotected-selfdestruct/) | SWC-106 | 自毁/卷款函数缺访问控制 |
+
+> 📍 **完整领域地图见 [LANDSCAPE.md](LANDSCAPE.md)**:穷尽合约漏洞、DeFi 经济攻击、跨链桥、钱包授权、
+> 治理攻击、审计工具链(Slither/Mythril/Echidna)、链上取证、**AI × 区块链**交叉,及"走向真实成果"的进阶路径。
 
 ## 工具与报告
 
 | 产物 | 说明 |
 |------|------|
-| [audit_scanner.py](audit_scanner.py) | 纯 Python 静态审计扫描器:正则 + 函数级 CEI 启发式,定位 8 类危险模式;自测 8/8 签名命中 |
+| [audit_scanner.py](audit_scanner.py) | 纯 Python 静态审计扫描器:正则 + 函数级启发式,定位 10 类危险模式;自测 10/10 签名命中 |
 | [AUDIT-REPORT.md](AUDIT-REPORT.md) | 审计报告示例:扫描定位 → 人工/AI 复核 → 评级 → 修复对照(对标 03 代码审计闭环) |
+| [LANDSCAPE.md](LANDSCAPE.md) | 区块链安全全景地图 + 审计方法论 + 进阶路径 |
+| 已接入 CI | [tests/test_blockchain_audit.py](../tests/test_blockchain_audit.py),随 `unittest discover` 在 GitHub Actions 常绿 |
 
 ```bash
 cd 08-blockchain-security
 python audit_scanner.py            # 扫描全部 .sol,输出疑似风险
 python audit_scanner.py --selftest # 自测:每个 Vulnerable 命中其签名类别
+# 或随全仓单测一起跑:
+python -m unittest discover -s tests
 ```
 
 ## 智能合约审计通用检查清单

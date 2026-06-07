@@ -29,7 +29,7 @@
 | ☠️ 数据投毒 | 准确率 **100% → 62% → 100%**(检测清洗恢复) | [数据投毒](07-ai-intrinsic-security/data-poisoning/) |
 | 🛡️ 工程化收口 | 注入/越狱/审计/输出统一中间件 + HTTP API | [LLM 安全网关](03-agent-rag-security/llm-security-gateway/) |
 | 🤖 全栈 AI 应用 | 对话/记忆/RAG/工具/护栏/Web/可观测性一体 | [AI 编程助手「码小安」](06-ai-development/ai-coding-helper/) |
-| ✅ 质量保障 | **34 个安全单元测试 + GitHub Actions CI** 常绿 | [tests/](tests/) |
+| ✅ 质量保障 | **40 个安全单元测试 + GitHub Actions CI** 常绿(含区块链审计扫描器) | [tests/](tests/) |
 
 > **45+ 可运行子项目 · 纯 Python · 模型层实验零 GPU · 应用层 demo 多数零依赖零 Key。**
 
@@ -102,7 +102,7 @@ flowchart LR
 | [05 简历与面试](05-resume-interview/) | 简历话术、JD 对照、STAR 故事、投递模板 | ✅ 持续更新 |
 | [06 AI 开发](06-ai-development/) | 真实 RAG / Agent / LangChain / 微调 / 全栈助手 | ✅ 6 个项目 |
 | [07 AI 内生安全](07-ai-intrinsic-security/) | 对抗/投毒/后门/成员推断/模型窃取/红队/DP-SGD | ✅ 7 个实验 |
-| [08 区块链安全](08-blockchain-security/) | 9 类智能合约漏洞对照 + Python 静态审计扫描器 + 审计报告 | ✅ 9 漏洞 + 扫描器 |
+| [08 区块链安全](08-blockchain-security/) | 11 类合约漏洞对照 + Python 静态审计扫描器 + 报告 + 全景地图 | ✅ 11 漏洞 + 扫描器 |
 
 ---
 
@@ -159,7 +159,7 @@ python -m unittest discover -s tests -v
 | [LoRA 微调(numpy手写)](06-ai-development/lora-finetune/) | AI 开发 | 手写低秩适配,6% 参数逼近全量微调 |
 | [Python 答疑客服](04-ops-ai-efficiency/python-ta-rag/) | 业务落地 | 86 篇知识库 + 四道护栏,评测正确率 95% |
 | [传统安全靶场 ×8](01-traditional-security/) | 传统安全 | SQLi/XSS/命令注入/路径穿越/SSRF/上传/反序列化/SSTI |
-| [智能合约审计 ×9](08-blockchain-security/) | 区块链安全 | 9 类漏洞对照 + Python 静态扫描器(8/8命中)+ 审计报告 |
+| [智能合约审计 ×11](08-blockchain-security/) | 区块链安全 | 11 类漏洞对照 + Python 静态扫描器(10/10命中)+ 审计报告 + 全景地图 |
 
 </details>
 
