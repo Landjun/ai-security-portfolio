@@ -29,7 +29,7 @@
 | ☠️ 数据投毒 | 准确率 **100% → 62% → 100%**(检测清洗恢复) | [数据投毒](07-ai-intrinsic-security/data-poisoning/) |
 | 🛡️ 工程化收口 | 注入/越狱/审计/输出统一中间件 + HTTP API | [LLM 安全网关](03-agent-rag-security/llm-security-gateway/) |
 | 🤖 全栈 AI 应用 | 对话/记忆/RAG/工具/护栏/Web/可观测性一体 | [AI 编程助手「码小安」](06-ai-development/ai-coding-helper/) |
-| ✅ 质量保障 | **40 个安全单元测试 + GitHub Actions CI** 常绿(含区块链审计扫描器) | [tests/](tests/) |
+| ✅ 质量保障 | **48 个安全单元测试 + GitHub Actions CI** 常绿(含区块链审计 / 护栏评测 / MCP / 多模态) | [tests/](tests/) |
 
 > **45+ 可运行子项目 · 纯 Python · 模型层实验零 GPU · 应用层 demo 多数零依赖零 Key。**
 
@@ -114,7 +114,7 @@ flowchart LR
 | [03 Agent / RAG 安全](03-agent-rag-security/) | RAG/Agent 攻防工具、安全网关、评测体系、代码审计 | ✅ 11 个工具 |
 | [04 运营 AI 提效](04-ops-ai-efficiency/) | 真实业务的 AI 自动化(含答疑客服旗舰) | ✅ 3 个案例 |
 | [05 简历与面试](05-resume-interview/) | 简历话术、JD 对照、STAR 故事、投递模板 | ✅ 持续更新 |
-| [06 AI 开发](06-ai-development/) | 真实 RAG / Agent / LangChain / 微调 / 全栈助手 | ✅ 6 个项目 |
+| [06 AI 开发](06-ai-development/) | 真实 RAG / Agent / LangChain / 微调 / 全栈助手 / TS Agent | ✅ 7 个项目 |
 | [07 AI 内生安全](07-ai-intrinsic-security/) | 对抗/投毒/后门/成员推断/模型窃取/红队/DP-SGD | ✅ 7 个实验 |
 | [08 区块链安全](08-blockchain-security/) | 11 类合约漏洞对照 + Python 静态审计扫描器 + 报告 + 全景地图 | ✅ 11 漏洞 + 扫描器 |
 
@@ -167,7 +167,8 @@ python -m unittest discover -s tests -v
 | [AI Agent 代码审计](03-agent-rag-security/agent-code-audit/) | 代码审计 | 7 类漏洞 + 扫描器 + 报告 + 修复闭环(8→0) |
 | [多智能体安全](03-agent-rag-security/multi-agent-security/) | 前沿 | 跨智能体注入传播 → 净化+最小权限纵深防御 |
 | [MCP 安全](03-agent-rag-security/mcp-security/) | 前沿·协议 | 工具描述投毒/rug-pull 检测 + 指纹 pin |
-| [AI 编程助手「码小安」](06-ai-development/ai-coding-helper/) | 全栈开发×安全 | 对话/记忆/RAG/工具+审计/护栏/SSE Web/可观测性 |
+| [AI 编程助手「码小安」](06-ai-development/ai-coding-helper/) | 全栈开发×安全 | 对话/记忆/RAG/工具+审计/护栏/SSE Web/可观测/评测/MCP/多模态/向量库 |
+| [TS Agent Guard](06-ai-development/ts-agent-guard/) | TypeScript×安全 | TS 复刻工具调用 Agent + 输入护栏 + 权限审计(node:test 9 单测) |
 | [LangChain Agent](06-ai-development/langchain-agent/) | AI 开发 | LangChain+DeepSeek 工具调用 + 权限审计 |
 | [AI 赋能安全自动化](06-ai-development/ai-assisted-security/) | 开发×安全 | AI 辅助漏洞情报 + AI 辅助代码审计 |
 | [LoRA 微调(numpy手写)](06-ai-development/lora-finetune/) | AI 开发 | 手写低秩适配,6% 参数逼近全量微调 |

@@ -12,7 +12,8 @@
 | [LangChain Agent](langchain-agent/) | 1.3 | LangChain(ChatOpenAI+@tool+bind_tools)+ 工具执行前权限审计 |
 | [LoRA 微调](lora-finetune/) | 1.4 | numpy 手写机制(6%参数)+ peft 真实微调 bert-tiny(0.19%参数,测试100%) |
 | [AI 赋能安全自动化](ai-assisted-security/) | 拓展 | AI 辅助漏洞情报分析 + AI 辅助代码审计(静态+语义混合) |
-| [AI 编程小助手「码小安」](ai-coding-helper/) | 拓展 | 对标 LangChain4j 教程的 Python 复刻:对话式 AI 服务 + 多会话记忆 + 流式输出 |
+| [AI 编程小助手「码小安」](ai-coding-helper/) | 拓展 | 对标 LangChain4j 教程的 Python 复刻:对话/记忆/RAG/工具+审计/护栏/SSE Web/可观测/评测/MCP/多模态/向量库 |
+| [TS Agent Guard](ts-agent-guard/) | 拓展 | TypeScript 复刻 Agent 工具调用 + 输入护栏 + 权限审计(回应 JD 的 TS 技术栈) |
 
 ## 与安全模块的关系
 

@@ -1,0 +1,19 @@
+{
+  "name": "ts-agent-guard",
+  "version": "0.1.0",
+  "description": "TypeScript 版工具调用 Agent + 输入护栏 + 权限审计(回应 JD 点名的 TypeScript)",
+  "type": "module",
+  "scripts": {
+    "demo": "tsx src/index.ts",
+    "test": "tsx --test src/guard.test.ts",
+    "build": "tsc"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0",
+    "@types/node": "^20.11.0"
+  }
+}
