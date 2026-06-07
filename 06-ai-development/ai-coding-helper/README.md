@@ -23,6 +23,7 @@ ai-coding-helper/
 ├── observability.py     # 日志与可观测性(结构化日志 + 延迟/token/成本指标 + 聚合)
 ├── evaluate.py          # 评测 harness(护栏 P/R/F1 + RAG Hit@1/Hit@3,可回归)
 ├── mcp_server.py        # MCP 服务器(JSON-RPC/stdio 暴露工具 + 无人值守审计关卡)
+├── multimodal.py        # 多模态:看代码/报错截图(OpenAI 兼容 vision 消息,需视觉模型)
 ├── logs/                # 运行时落的 JSON 日志(已 gitignore)
 ├── Dockerfile / docker-compose.yml / .dockerignore  # 容器化部署(B3)
 ├── docs/RECORD-DEMO.md  # 演示 gif 录制指南
@@ -52,6 +53,7 @@ ai-coding-helper/
 | 日志与可观测性 | `observability.py` 结构化 JSON 日志 + 延迟/token/成本指标 + `/api/metrics` 聚合 | ✅ |
 | 评测 harness | `evaluate.py` 护栏 P/R/F1 + RAG Hit@1/Hit@3,可回归(护栏部分接入 CI) | ✅ |
 | MCP 服务器 | `mcp_server.py` 纯标准库 MCP(JSON-RPC/stdio)暴露工具 + 无人值守审计关卡 | ✅ |
+| 多模态(看图) | `multimodal.py` OpenAI 兼容多模态消息(看代码/报错截图,需视觉模型) | ✅ |
 
 ## 运行 & 验证
 
@@ -128,6 +130,8 @@ python observability.py
 python evaluate.py
 # 4d) MCP 服务器:协议握手 / 工具发现 / 审计关卡 自测(无需 key)
 python mcp_server.py --selftest
+# 4e) 多模态:消息构造自测(无需 key);--demo <图> 干跑看构造的请求
+python multimodal.py --selftest
 # 5) Web/SSE 管线(无需真实 key,用假流验证接口与前端)
 $env:DEEPSEEK_API_KEY="dummy"; python -c "from fastapi.testclient import TestClient; import web_app; web_app.helper.stream_reply=lambda s,u:(t for t in ['hi','!']); c=TestClient(web_app.app); r=c.post('/api/chat',json={'message':'x','session_id':'t'}); print('OK' if 'DONE' in r.text else 'NG')"
 ```
