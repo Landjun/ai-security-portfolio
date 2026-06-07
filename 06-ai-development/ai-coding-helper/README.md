@@ -21,6 +21,7 @@ ai-coding-helper/
 ├── web_app.py           # FastAPI Web 服务(SSE 流式 /api/chat + CORS + /api/metrics)
 ├── static/index.html    # 极简前端聊天页
 ├── observability.py     # 日志与可观测性(结构化日志 + 延迟/token/成本指标 + 聚合)
+├── evaluate.py          # 评测 harness(护栏 P/R/F1 + RAG Hit@1/Hit@3,可回归)
 ├── logs/                # 运行时落的 JSON 日志(已 gitignore)
 ├── Dockerfile / docker-compose.yml / .dockerignore  # 容器化部署(B3)
 ├── docs/RECORD-DEMO.md  # 演示 gif 录制指南
@@ -48,6 +49,7 @@ ai-coding-helper/
 | Guardrail（护栏） | `guardrails.py` 输入拦提示注入 + 输出 DLP 脱敏（复用 02） | ✅ |
 | Web 前端 + SSE 接口 | `web_app.py` FastAPI SSE 流式 `/api/chat` + `static/index.html` 聊天页 + CORS | ✅ |
 | 日志与可观测性 | `observability.py` 结构化 JSON 日志 + 延迟/token/成本指标 + `/api/metrics` 聚合 | ✅ |
+| 评测 harness | `evaluate.py` 护栏 P/R/F1 + RAG Hit@1/Hit@3,可回归(护栏部分接入 CI) | ✅ |
 
 ## 运行 & 验证
 
@@ -107,6 +109,8 @@ python tools.py
 python guardrails.py
 # 4b) 可观测性:token 估算 / 成本记账 / 日志聚合(无需 key)
 python observability.py
+# 4c) 评测 harness:护栏 P/R/F1(无需 key);加 --rag 跑检索 Hit@k(需 fastembed)
+python evaluate.py
 # 5) Web/SSE 管线(无需真实 key,用假流验证接口与前端)
 $env:DEEPSEEK_API_KEY="dummy"; python -c "from fastapi.testclient import TestClient; import web_app; web_app.helper.stream_reply=lambda s,u:(t for t in ['hi','!']); c=TestClient(web_app.app); r=c.post('/api/chat',json={'message':'x','session_id':'t'}); print('OK' if 'DONE' in r.text else 'NG')"
 ```
