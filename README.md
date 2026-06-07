@@ -89,6 +89,20 @@ flowchart LR
 
 > 可替代助教的 RAG 智能客服:86 篇知识库 + **四道护栏**(防幻觉 / 防注入 / 合规 / 引用溯源),20 条标注集评测正确率 **95%**。命令行 + 网页双界面。
 
+### 4️⃣ 智能合约审计闭环 —— 11 类漏洞 + 自研静态扫描器 · [代码](08-blockchain-security/)
+
+```mermaid
+flowchart LR
+    SOL[".sol 合约"] --> SCAN["audit_scanner.py<br/>静态扫描 10 类危险模式"]
+    SCAN --> REVIEW["人工 / AI 语义复核<br/>重入CEI · 预言机 · 抢跑"]
+    REVIEW --> RATE["评级<br/>SWC / 严重度"]
+    RATE --> FIX["对照修复<br/>Fixed.sol"]
+    FIX --> CI["CI 回归<br/>10/10 自测常绿"]
+    CI -.复测.-> SCAN
+```
+
+> 与 AI 代码审计同一套「扫描定位 → 人工/AI 复核 → 评级 → 修复 → 复测」方法论;详见 [全景地图](08-blockchain-security/LANDSCAPE.md)。
+
 ---
 
 ## 📂 模块导航

@@ -27,13 +27,13 @@
 
 ## 完整版(4 条,作品集是简历主项时用)
 
-**AI 安全作品集(个人开源,约 19 个可运行项目) | Python · DeepSeek · scikit-learn · fastembed · numpy**
+**AI 安全作品集(个人开源,45+ 可运行子项目) | Python · DeepSeek · LangChain · FastAPI · scikit-learn · fastembed**
 **GitHub: github.com/Landjun/ai-security-portfolio**
 
 - **AI 内生安全**:复现并防御模型层六大攻击面 + DP-SGD 差分隐私训练,每个有量化结果(如成员推断 AUC 0.93→正则化 0.56;模型窃取保真度 95%;后门干净准确率 100% 仍可被触发器激活)。对应 OWASP ML/LLM Top 10、MITRE ATLAS。
 - **应用/Agent 安全**:真实 DeepSeek 上验证提示注入/越狱/RAG 注入/Agent 越权攻防;自动化红队量化检测器绕过率,并用语义 ML 检测把绕过率从 53% 降到 0%、零误报。
 - **工程化**:将所有检测器封装为统一「LLM 安全网关」(输入护栏 + 动作审计 + 输出扫描 + 审计日志),提供库与零依赖 HTTP API,安全能力可插拔接入。
-- **AI 开发 + 传统安全**:真实 RAG 与 function-calling Agent;对标 LangChain4j 用 Python 复刻全栈 AI 编程助手「码小安」(对话/记忆/RAG/工具+权限审计/双向护栏/FastAPI SSE Web);并以本地靶场复现 SQL 注入/XSS/命令注入/路径穿越(OWASP A01/A03),支撑从传统安全到 AI 安全的转型叙事。
+- **AI 开发 + 传统安全 + 区块链**:真实 RAG 与 function-calling Agent;对标 LangChain4j 用 Python 复刻全栈 AI 编程助手「码小安」(对话/记忆/RAG/工具+权限审计/双向护栏/FastAPI SSE Web);本地靶场复现 SQL 注入/XSS/命令注入/路径穿越(OWASP A01/A03);并做智能合约安全审计套件(11 类漏洞对照 + 自研静态扫描器 10/10 命中,已接 CI),支撑「传统安全 → AI 安全 → 区块链安全」的全栈转型叙事。
 
 ---
 
