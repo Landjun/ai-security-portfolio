@@ -38,9 +38,13 @@ class Retriever:
         scored.sort(key=lambda x: x[0], reverse=True)
         return scored[:top_k]
 
-    def build_context(self, query: str, top_k: int = TOP_K) -> str:
-        """检索并拼成可直接塞进提示词的【知识库资料】文本;无命中返回空串。"""
+    def build_context(self, query: str, top_k: int = TOP_K):
+        """
+        检索并拼成可直接塞进提示词的【知识库资料】文本。
+        返回 (context_str, n_hits);无命中返回 ("", 0)。
+        """
         hits = self.retrieve(query, top_k)
         if not hits:
-            return ""
-        return "\n".join(f"【{doc['title']}】{doc['content']}" for _, doc in hits)
+            return "", 0
+        context = "\n".join(f"【{doc['title']}】{doc['content']}" for _, doc in hits)
+        return context, len(hits)

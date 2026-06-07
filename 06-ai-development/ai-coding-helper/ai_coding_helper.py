@@ -69,7 +69,7 @@ class ChatMemory:
 class AiCodingHelper:
     """AI 服务:把『模型 + 系统提示 + 会话记忆 + (可选)检索』封装成一个可复用的服务对象。"""
 
-    def __init__(self, retriever=None, use_tools=False, guardrails=False):
+    def __init__(self, retriever=None, use_tools=False, guardrails=False, trace=False):
         api_key = os.environ.get("DEEPSEEK_API_KEY")
         if not api_key:
             raise SystemExit(
@@ -80,6 +80,52 @@ class AiCodingHelper:
         self.retriever = retriever  # 传入则启用 RAG;为 None 则纯对话
         self.use_tools = use_tools  # 开启则走 function calling 工具调用循环
         self.guardrails = guardrails  # 开启则启用输入/输出安全护栏
+        self.trace = trace  # 开启则把每轮指标也打印到控制台
+
+    def _mode_str(self) -> str:
+        """当前模式串,写进日志便于分组统计。"""
+        parts = []
+        if self.retriever is not None:
+            parts.append("rag")
+        if self.use_tools:
+            parts.append("tools")
+        if self.guardrails:
+            parts.append("safe")
+        return "+".join(parts) if parts else "chat"
+
+    @staticmethod
+    def _usage_dict(usage):
+        """把 SDK 的 usage 对象规整成 dict;拿不到返回 None。"""
+        if not usage:
+            return None
+        return {
+            "prompt_tokens": getattr(usage, "prompt_tokens", 0) or 0,
+            "completion_tokens": getattr(usage, "completion_tokens", 0) or 0,
+            "total_tokens": getattr(usage, "total_tokens", 0) or 0,
+        }
+
+    def _record(self, session_id, user_input, answer, usage, latency_s,
+                rag_hits=0, tool_calls=0, blocked=False):
+        """落一条可观测性记录:延迟 + token + 成本 + 模式 + RAG/工具计数。"""
+        import observability as obs
+        if usage:
+            pt, ct = usage["prompt_tokens"], usage["completion_tokens"]
+            tt = usage.get("total_tokens", pt + ct)
+            estimated = False
+        else:  # 流式拿不到 usage 时用字符启发式估算
+            pt = obs.estimate_tokens(user_input)
+            ct = obs.estimate_tokens(answer)
+            tt = pt + ct
+            estimated = True
+        rec = obs.log_turn({
+            "session_id": session_id, "mode": self._mode_str(),
+            "latency_s": latency_s, "prompt_tokens": pt, "completion_tokens": ct,
+            "total_tokens": tt, "estimated": estimated,
+            "rag_hits": rag_hits, "tool_calls": tool_calls, "blocked": blocked,
+        })
+        if self.trace:
+            print(obs.console_line(rec))
+        return rec
 
     def _guard_input(self, user_input: str):
         """输入护栏:命中提示注入则返回拦截语,否则返回 None。"""
@@ -106,45 +152,57 @@ class AiCodingHelper:
         一轮对话:系统提示 +(可选)检索资料 + 该会话历史 + 本次输入 -> 模型作答 -> 写回记忆。
         开启工具时走工具调用循环;否则按 stream 流式/非流式直接作答。
         """
+        import observability as obs
+
         # 输入护栏:疑似提示注入直接拦截,根本不喂给模型
         blocked = self._guard_input(user_input)
         if blocked is not None:
             print(blocked)
+            self._record(session_id, user_input, blocked, None, 0.0, blocked=True)
             return blocked
 
         if self.use_tools:
             return self._chat_with_tools(session_id, user_input)
 
-        messages = self._build_messages(session_id, user_input)
+        messages, rag_hits = self._build_messages(session_id, user_input)
 
-        # 开启输出护栏时改用非流式:拿到完整输出后做 DLP 脱敏再打印
-        if self.guardrails:
-            resp = self.client.chat.completions.create(
-                model=CHAT_MODEL, messages=messages, temperature=0.3
-            )
-            answer = self._guard_output(resp.choices[0].message.content)
-            print(answer)
-        elif stream:
-            answer = self._chat_stream(messages)
-        else:
-            resp = self.client.chat.completions.create(
-                model=CHAT_MODEL, messages=messages, temperature=0.3
-            )
-            answer = resp.choices[0].message.content
+        usage = None
+        with obs.Timer() as t:
+            # 开启输出护栏时改用非流式:拿到完整输出后做 DLP 脱敏再打印
+            if self.guardrails:
+                resp = self.client.chat.completions.create(
+                    model=CHAT_MODEL, messages=messages, temperature=0.3
+                )
+                usage = self._usage_dict(resp.usage)
+                answer = self._guard_output(resp.choices[0].message.content)
+                print(answer)
+            elif stream:
+                answer, usage = self._chat_stream(messages)
+            else:
+                resp = self.client.chat.completions.create(
+                    model=CHAT_MODEL, messages=messages, temperature=0.3
+                )
+                usage = self._usage_dict(resp.usage)
+                answer = resp.choices[0].message.content
 
         # 写回记忆:本轮的提问和回答都进入该会话的窗口
         self.memory.add(session_id, "user", user_input)
         self.memory.add(session_id, "assistant", answer)
+        self._record(session_id, user_input, answer, usage, t.seconds, rag_hits=rag_hits)
         return answer
 
-    def _build_messages(self, session_id: str, user_input: str) -> list:
-        """拼装本轮 messages:系统提示 + 会话历史 +(可选 RAG 检索资料 +)本次输入。"""
+    def _build_messages(self, session_id: str, user_input: str):
+        """
+        拼装本轮 messages:系统提示 + 会话历史 +(可选 RAG 检索资料 +)本次输入。
+        返回 (messages, rag_hits);rag_hits 供可观测性记录命中数。
+        """
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
         messages.extend(self.memory.history(session_id))
 
         # RAG:检索知识库,把相关资料作为本轮的额外上下文(检索/生成解耦)
+        rag_hits = 0
         if self.retriever is not None:
-            context = self.retriever.build_context(user_input)
+            context, rag_hits = self.retriever.build_context(user_input)
             if context:
                 turn = (
                     "请优先依据下面的【知识库资料】回答;资料不足时再用你自己的知识补充,"
@@ -155,61 +213,78 @@ class AiCodingHelper:
             messages.append({"role": "user", "content": turn})
         else:
             messages.append({"role": "user", "content": user_input})
-        return messages
+        return messages, rag_hits
 
     def stream_reply(self, session_id: str, user_input: str):
         """
         Web 用的流式生成器:逐段 yield 文本增量(给 SSE 接口推送)。
         先过输入护栏;若开启输出护栏则改为整段脱敏后一次性 yield。
         """
+        import observability as obs
+
         blocked = self._guard_input(user_input)
         if blocked is not None:
+            self._record(session_id, user_input, blocked, None, 0.0, blocked=True)
             yield blocked
             return
 
-        messages = self._build_messages(session_id, user_input)
+        messages, rag_hits = self._build_messages(session_id, user_input)
 
-        if self.guardrails:
-            # 输出护栏需要完整文本才能脱敏,故非流式取全量再 yield
-            resp = self.client.chat.completions.create(
-                model=CHAT_MODEL, messages=messages, temperature=0.3
-            )
-            answer = self._guard_output(resp.choices[0].message.content)
-            yield answer
-        else:
-            chunks = []
-            resp = self.client.chat.completions.create(
-                model=CHAT_MODEL, messages=messages, temperature=0.3, stream=True
-            )
-            for piece in resp:
-                delta = piece.choices[0].delta.content
-                if delta:
-                    chunks.append(delta)
-                    yield delta
-            answer = "".join(chunks)
+        usage = None
+        with obs.Timer() as t:
+            if self.guardrails:
+                # 输出护栏需要完整文本才能脱敏,故非流式取全量再 yield
+                resp = self.client.chat.completions.create(
+                    model=CHAT_MODEL, messages=messages, temperature=0.3
+                )
+                usage = self._usage_dict(resp.usage)
+                answer = self._guard_output(resp.choices[0].message.content)
+                yield answer
+            else:
+                chunks = []
+                resp = self.client.chat.completions.create(
+                    model=CHAT_MODEL, messages=messages, temperature=0.3,
+                    stream=True, stream_options={"include_usage": True},
+                )
+                for piece in resp:
+                    if getattr(piece, "usage", None):  # 末尾带 usage 的块
+                        usage = self._usage_dict(piece.usage)
+                    if piece.choices:
+                        delta = piece.choices[0].delta.content
+                        if delta:
+                            chunks.append(delta)
+                            yield delta
+                answer = "".join(chunks)
 
         self.memory.add(session_id, "user", user_input)
         self.memory.add(session_id, "assistant", answer)
+        self._record(session_id, user_input, answer, usage, t.seconds, rag_hits=rag_hits)
 
-    def _chat_stream(self, messages: list) -> str:
-        """流式调用:逐 chunk 打印并拼接出完整答案。"""
+    def _chat_stream(self, messages: list):
+        """流式调用:逐 chunk 打印并拼接出完整答案。返回 (answer, usage)。"""
         chunks = []
+        usage = None
         resp = self.client.chat.completions.create(
-            model=CHAT_MODEL, messages=messages, temperature=0.3, stream=True
+            model=CHAT_MODEL, messages=messages, temperature=0.3,
+            stream=True, stream_options={"include_usage": True},
         )
         for piece in resp:
-            delta = piece.choices[0].delta.content
-            if delta:
-                print(delta, end="", flush=True)
-                chunks.append(delta)
+            if getattr(piece, "usage", None):  # 末尾带 usage 的块,choices 可能为空
+                usage = self._usage_dict(piece.usage)
+            if piece.choices:
+                delta = piece.choices[0].delta.content
+                if delta:
+                    print(delta, end="", flush=True)
+                    chunks.append(delta)
         print()  # 换行收尾
-        return "".join(chunks)
+        return "".join(chunks), usage
 
     def _chat_with_tools(self, session_id: str, user_input: str) -> str:
         """
         工具调用循环(ReAct 核心,对标教程的 Tools):
         模型自主决定是否调工具 -> 工具先过权限审计再执行 -> 结果回填 -> 直到最终答案。
         """
+        import observability as obs
         from tools import TOOL_SCHEMAS, dispatch  # 延迟导入:不开 tools 就不加载
 
         messages = [{"role": "system", "content": SYSTEM_PROMPT}]
@@ -217,32 +292,41 @@ class AiCodingHelper:
         messages.append({"role": "user", "content": user_input})
 
         answer = "(已达到最大步数,未得到最终答案)"
-        for step in range(1, MAX_TOOL_STEPS + 1):
-            resp = self.client.chat.completions.create(
-                model=CHAT_MODEL, messages=messages,
-                tools=TOOL_SCHEMAS, tool_choice="auto", temperature=0.3,
-            )
-            msg = resp.choices[0].message
+        tool_calls = 0
+        agg = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        with obs.Timer() as t:
+            for step in range(1, MAX_TOOL_STEPS + 1):
+                resp = self.client.chat.completions.create(
+                    model=CHAT_MODEL, messages=messages,
+                    tools=TOOL_SCHEMAS, tool_choice="auto", temperature=0.3,
+                )
+                u = self._usage_dict(resp.usage)  # 累加每一步的 token
+                if u:
+                    for k in agg:
+                        agg[k] += u.get(k, 0)
+                msg = resp.choices[0].message
 
-            if not msg.tool_calls:          # 没有要调工具 -> 最终答案
-                answer = self._guard_output(msg.content)  # 输出护栏:最终答案脱敏
-                print(answer)
-                break
+                if not msg.tool_calls:          # 没有要调工具 -> 最终答案
+                    answer = self._guard_output(msg.content)  # 输出护栏:最终答案脱敏
+                    print(answer)
+                    break
 
-            messages.append(msg)            # 把"要调工具"的消息加入历史
-            for tc in msg.tool_calls:
-                name = tc.function.name
-                raw_args = tc.function.arguments
-                print(f"  [第{step}步] 模型请求调用工具:{name}({raw_args})")
-                result = dispatch(name, raw_args)   # 工具内部已过权限审计
-                print(f"  -> {result}")
-                messages.append({
-                    "role": "tool", "tool_call_id": tc.id, "content": result,
-                })
+                messages.append(msg)            # 把"要调工具"的消息加入历史
+                for tc in msg.tool_calls:
+                    tool_calls += 1
+                    name = tc.function.name
+                    raw_args = tc.function.arguments
+                    print(f"  [第{step}步] 模型请求调用工具:{name}({raw_args})")
+                    result = dispatch(name, raw_args)   # 工具内部已过权限审计
+                    print(f"  -> {result}")
+                    messages.append({
+                        "role": "tool", "tool_call_id": tc.id, "content": result,
+                    })
 
         # 写回记忆:只存原始问答(不污染上下文)
         self.memory.add(session_id, "user", user_input)
         self.memory.add(session_id, "assistant", answer)
+        self._record(session_id, user_input, answer, agg, t.seconds, tool_calls=tool_calls)
         return answer
 
 
@@ -285,18 +369,20 @@ def interactive(helper: AiCodingHelper) -> None:
 def main():
     load_dotenv()  # 从当前目录的 .env 读取 DEEPSEEK_API_KEY
 
-    # 解析开关:--rag 检索,--tools 工具调用,--safe 安全护栏;其余参数拼成单轮问题
+    # 解析开关:--rag 检索,--tools 工具调用,--safe 护栏,--trace 控制台打印指标
     args = sys.argv[1:]
     use_rag = "--rag" in args
     use_tools = "--tools" in args
     guardrails = "--safe" in args
-    args = [a for a in args if a not in ("--rag", "--tools", "--safe")]
+    trace = "--trace" in args
+    args = [a for a in args if a not in ("--rag", "--tools", "--safe", "--trace")]
 
     retriever = None
     if use_rag:
         from retriever import Retriever  # 延迟导入:不开 RAG 就不加载 fastembed
         retriever = Retriever()
-    helper = AiCodingHelper(retriever=retriever, use_tools=use_tools, guardrails=guardrails)
+    helper = AiCodingHelper(retriever=retriever, use_tools=use_tools,
+                            guardrails=guardrails, trace=trace)
 
     if args:
         question = " ".join(args)

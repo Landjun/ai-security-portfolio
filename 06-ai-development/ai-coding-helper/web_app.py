@@ -61,6 +61,13 @@ def health():
     return {"status": "ok", "model": "deepseek-chat"}
 
 
+@app.get("/api/metrics")
+def metrics():
+    """可观测性:聚合最近的对话日志(总轮次/平均延迟/总 token/总成本)。"""
+    import observability as obs
+    return obs.summarize()
+
+
 @app.post("/api/chat")
 def chat(req: ChatRequest):
     """SSE 流式:把 helper.stream_reply 的每段增量包成 SSE 事件推给前端。"""
