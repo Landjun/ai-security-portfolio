@@ -22,6 +22,7 @@ ai-coding-helper/
 ├── static/index.html    # 极简前端聊天页
 ├── observability.py     # 日志与可观测性(结构化日志 + 延迟/token/成本指标 + 聚合)
 ├── evaluate.py          # 评测 harness(护栏 P/R/F1 + RAG Hit@1/Hit@3,可回归)
+├── mcp_server.py        # MCP 服务器(JSON-RPC/stdio 暴露工具 + 无人值守审计关卡)
 ├── logs/                # 运行时落的 JSON 日志(已 gitignore)
 ├── Dockerfile / docker-compose.yml / .dockerignore  # 容器化部署(B3)
 ├── docs/RECORD-DEMO.md  # 演示 gif 录制指南
@@ -50,6 +51,7 @@ ai-coding-helper/
 | Web 前端 + SSE 接口 | `web_app.py` FastAPI SSE 流式 `/api/chat` + `static/index.html` 聊天页 + CORS | ✅ |
 | 日志与可观测性 | `observability.py` 结构化 JSON 日志 + 延迟/token/成本指标 + `/api/metrics` 聚合 | ✅ |
 | 评测 harness | `evaluate.py` 护栏 P/R/F1 + RAG Hit@1/Hit@3,可回归(护栏部分接入 CI) | ✅ |
+| MCP 服务器 | `mcp_server.py` 纯标准库 MCP(JSON-RPC/stdio)暴露工具 + 无人值守审计关卡 | ✅ |
 
 ## 运行 & 验证
 
@@ -94,6 +96,19 @@ docker compose up --build     # 或: docker build -t coding-helper . && docker r
 > 镜像含 ML 依赖(fastembed/chromadb)体积较大;只需 Web 对话可自行精简 requirements。
 > 🎬 想给招聘方放一张「流式问答」演示 gif?照 [docs/RECORD-DEMO.md](docs/RECORD-DEMO.md) 录制即可。
 
+**接入 MCP 客户端(如 Claude Desktop)**:把 `mcp_server.py` 配成一个 MCP server,客户端即可发现并调用其工具(只读放行、敏感动作无人确认时按审计关卡拒绝):
+
+```json
+{
+  "mcpServers": {
+    "coding-helper": {
+      "command": "python",
+      "args": ["C:/Users/Administrator/Desktop/AIsec/06-ai-development/ai-coding-helper/mcp_server.py"]
+    }
+  }
+}
+```
+
 **离线自测**（不消耗 key）：
 
 ```powershell
@@ -111,6 +126,8 @@ python guardrails.py
 python observability.py
 # 4c) 评测 harness:护栏 P/R/F1(无需 key);加 --rag 跑检索 Hit@k(需 fastembed)
 python evaluate.py
+# 4d) MCP 服务器:协议握手 / 工具发现 / 审计关卡 自测(无需 key)
+python mcp_server.py --selftest
 # 5) Web/SSE 管线(无需真实 key,用假流验证接口与前端)
 $env:DEEPSEEK_API_KEY="dummy"; python -c "from fastapi.testclient import TestClient; import web_app; web_app.helper.stream_reply=lambda s,u:(t for t in ['hi','!']); c=TestClient(web_app.app); r=c.post('/api/chat',json={'message':'x','session_id':'t'}); print('OK' if 'DONE' in r.text else 'NG')"
 ```
