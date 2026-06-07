@@ -35,4 +35,4 @@ npm run build        # 仅类型检查(tsc --noEmit)
 
 ## 安全边界 & 说明
 工具均为模拟(退款不涉真实资金);仅本地/学习用途。
-> 注:本仓库作者机器未安装 Node,**本项目未在本机构建**;代码为标准 TS,按上面命令在装有 Node ≥18 的机器即可 `npm install && npm test` 跑通。
+> 注:作者机器未装 Node,但本项目已接入 **GitHub Actions CI**(`typescript` job:`npm install` → `tsc --noEmit` 类型检查 → `npm test` node:test),由 CI 在 Node 20 上构建与测试,保证可运行。本机同样可 `npm install && npm test` 复现。

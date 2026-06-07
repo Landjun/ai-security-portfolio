@@ -10,6 +10,7 @@
 ![OWASP](https://img.shields.io/badge/OWASP_LLM_Top_10-全覆盖-FF6B00)
 ![ATLAS](https://img.shields.io/badge/MITRE_ATLAS-对齐-blue)
 ![Stack](https://img.shields.io/badge/DeepSeek·LangChain·FastAPI·fastembed-informational)
+![License](https://img.shields.io/badge/License-MIT-green)
 ![Scope](https://img.shields.io/badge/用途-学习与防御研究-lightgrey)
 
 <em>把每一次学习都沉淀成 <strong>可运行代码 · 量化结果 · 可复现环境 · 面试表达</strong>。</em>

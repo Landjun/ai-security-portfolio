@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: 单元测试(安全 + 传统安全模块)
+    name: 单元测试(安全 + 传统安全 + 区块链审计 + 码小安护栏/MCP/多模态)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,5 +18,28 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: 运行测试套件
+      - name: 运行测试套件(纯标准库,无需安装依赖)
         run: python -m unittest discover -s tests -v
+
+  typescript:
+    name: TypeScript 测试(ts-agent-guard)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 安装依赖
+        working-directory: 06-ai-development/ts-agent-guard
+        run: npm install
+
+      - name: 类型检查(tsc --noEmit)
+        working-directory: 06-ai-development/ts-agent-guard
+        run: npm run build
+
+      - name: 运行单测(node:test)
+        working-directory: 06-ai-development/ts-agent-guard
+        run: npm test
