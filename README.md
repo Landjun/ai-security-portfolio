@@ -190,7 +190,7 @@ python -m unittest discover -s tests -v
 - [我做了一个"会拒绝学员"的 Python 答疑 AI](articles/python-ta-rag-build.md)
 - [从"手动发现"到"自动根治":一次完整的 LLM 注入攻防闭环](articles/real-llm-injection-closed-loop.md)
 - [AI 安全评测:从"会单点攻击"到"能体系化交付"](articles/ai-security-assessment-system.md)
-- 📂 求职配套:[投递话术](05-resume-interview/hr-outreach.md) · [JD 缺口分析](05-resume-interview/jd-gap-analysis.md) · [简历项目段](05-resume-interview/resume-project-section.md) · [面试口播稿](05-resume-interview/talk-deck-outline.md) · [**穷尽面试题库**](05-resume-interview/interview-question-bank.md) · [面试就绪清单](05-resume-interview/github-showcase-checklist.md)
+- 📂 求职配套:[投递话术](05-resume-interview/hr-outreach.md) · [JD 缺口分析](05-resume-interview/jd-gap-analysis.md) · [简历项目段](05-resume-interview/resume-project-section.md) · [面试口播稿](05-resume-interview/talk-deck-outline.md) · [**穷尽面试题库**](05-resume-interview/interview-question-bank.md) · [追问链/逼问手册](05-resume-interview/interview-followup-drills.md) · [整场模拟面试脚本](05-resume-interview/mock-interview-fullscript.md) · [面试就绪清单](05-resume-interview/github-showcase-checklist.md)
 
 ---
 
